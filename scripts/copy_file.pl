@@ -20,19 +20,26 @@ $targetfile =~s~$apache_cfg->{SOURCE}~$apache_cfg->{APACHE_ROOT}~i;
 
 my $file_name = WinLin::get_filename($targetfile);
 my $path = WinLin::get_target_path($targetfile, $file_name);
-my $project = WinLin::get_project_from_path($targetfile, $apache_cfg->{APACHE_ROOT} );
+my $project_tmpl = WinLin::get_project_from_path($targetfile, $apache_cfg->{APACHE_ROOT} );
 
-$path =~s/$project//;
-$path .="/$project";
+my @projects = $project_tmpl =~/common/i ? ($project_tmpl) :
+                                           qw(diakontroll gherkin_editor ontozo);
 
-if (!-d $path ) {
-  my $dirs = eval { mkpath($path) };
-  die "Failed to create $path: $@\n" unless $dirs;
+for my $project ( @projects ) {
+    $path =~s/$project//;
+    $path .="/$project";
+    
+    if (!-d $path ) {
+      my $dirs = eval { mkpath($path) };
+      die "Failed to create $path: $@\n" unless $dirs;
+    }
+    
+    if(-e $path . "/" . $file_name) {
+        unlink ($path . "/" . $file_name);
+    }
+    
+    cp($src_file, $path . "/" . $file_name);
+    print 'cp(' . $src_file . ',' . $path . "/" . $file_name . ')' . "\n";
 }
 
-if(-e $path . "/" . $file_name) {
-    unlink ($path . "/" . $file_name);
-}
 
-cp($src_file, $path . "/" . $file_name);
-print 'cp(' . $src_file . ',' . $path . "/" . $file_name . ')' . "\n";
