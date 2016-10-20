@@ -43,6 +43,11 @@ sub init{
     return $self ;
 }
 
+sub change_source {
+    my $self = shift;
+    $self->{ "TEMPLATE" } = shift // '';
+}
+
 sub fill_in{
     my $self = shift ;
 

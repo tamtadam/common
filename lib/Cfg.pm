@@ -95,13 +95,8 @@ sub TIEHASH {
          if ( $key =~ /\[\s*([0-9]+)\s*\]$/ ) {
             my $idx = $1;
             $key =~ s/\[\s*$idx\s*\]$//;
-             print $prekey . "\n";
-             print $key . "\n";
-             print $idx . "\n";
             eval '$cnf'."$prekey"."{$key}[$idx]='$val'"
          } else {
-              print $prekey . "\n";
-             print $key . "\n";
             eval '$cnf'."$prekey"."{$key}='$val'"
          }
       }
