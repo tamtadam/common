@@ -81,9 +81,9 @@ sub TIEHASH {
             }
             next
          }
-         
+
          ( $key, $val ) = split /$splitsep/, $_, 2;
-         
+
          $key =~ s/^\s*(.*?)\s*$/$1/;
          $val =~ s/^\s*(.*?)\s*$/$1/;
          $val =~ s/"/\"/g;                         # escape quotation marks (") in value to avoid problem at eval
@@ -102,7 +102,7 @@ sub TIEHASH {
       }
       close FH;
       $node->{CNF} = \%cnf
-   } else { 
+   } else {
        print "Can't open file: $file\n" and die;
    }
    my $this = bless $node, $class;
@@ -121,7 +121,7 @@ sub getHash {
 sub __change {
   my $change = shift;
   my $value  = shift;
-  
+
   my $from;
   my $to;
   my $g;
@@ -186,9 +186,9 @@ sub DESTROY {
       print $fh "\n";
 
       __write_self($self->{CNF},$fh,0,$self->{SEP},$self->{CMNT},"");
-      
+
       print $fh "\n";
-      
+
       close $fh;
       chmod $self->{MODE}, $self->{FILE};
 
@@ -224,11 +224,11 @@ sub __write_self {
             }
          } else {
             print $fh "$key", "$sep", "$value\n" ;
-            
+
 #            if ( ! $key ||  ! $sep || ! $value ) {
 #               print Dumper ( { key => $key, sep => $sep, value => $value } ) ;
 #            }
-            
+
          }
       }
    }
@@ -249,15 +249,15 @@ sub __write_self {
 sub get_struct_from_file{
     my  %cfg = ();
     my %rcfg;
-    
+
     tie %cfg, 'Cfg' , READ => $_[0] ,
                       COMMENT => '#';
-    unless ( %cfg ) {    
+    unless ( %cfg ) {
       print "Reading of $_[0] is F A I L E D\n" and return undef ;
     }
     %rcfg = %cfg ;
     untie %cfg   ;
-    
+
     return \%rcfg ;
 }
 
