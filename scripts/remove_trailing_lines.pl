@@ -15,7 +15,7 @@ map {
     }
 } @cont [ 1 .. $#cont ];
 
-open(my $fh, ">:encoding(UTF-8)", $ARGV[0]);
+open($fh, ">:encoding(UTF-8)", $ARGV[0]);
 print $fh @cont;
 close $fh;
 
