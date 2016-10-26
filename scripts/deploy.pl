@@ -19,9 +19,9 @@ $src = change_project_version($src);
 my $target_dir = $win2lin->{TARGET_DIR} . $version;
 
 my $host = $win2lin->{USER} . '@' . $win2lin->{IP};
-my $cmd = "cmd.exe " . $win2lin->{SCP} . q{ } . " -batch -i " . $win2lin->{PRIVKEY} . " -r -p " . $src . q{ } . $host . ':' .$target_dir;
+my $cmd = $win2lin->{SCP} . q{ } . " -i " . $win2lin->{PRIVKEY} . " -r -p " . $src . q{ } . $host . ':' .$target_dir;
 print $cmd . "\n";
-system( $cmd );
+system $cmd;
 
 sub change_project_version {
     state $templ = Template->new({
