@@ -4,7 +4,7 @@ use 5.010001;
 use strict;
 use warnings;
 use MyFile  ;
-use base 'Exporter'; 
+use base 'Exporter';
 our $VERSION = '0.04';
 
 use constant TYPE => {
@@ -17,14 +17,14 @@ use constant TYPE => {
 our @EXPORT_OK = qw( TYPE );
 
 # TYPE => 'FILE',        SOURCE => 'filename.tmpl
-# TYPE => 'ARRAY',       
-# TYPE => 'FILEHANDLE',  
-# TYPE => 'STRING',      
+# TYPE => 'ARRAY',
+# TYPE => 'FILEHANDLE',
+# TYPE => 'STRING',
 sub new {
     my $instance = shift;
     my $class    = ref $instance || $instance;
     my $self     = {};
-    
+
     bless $self, $class;
     $self->init( @_ ) ;
     $self;
@@ -33,10 +33,10 @@ sub new {
 sub init{
     my $self = shift ;
     $self->{ "TEMPLATE" } = "" ;
-    
+
     if( $_[ 0 ]->{ 'TYPE' } eq TYPE->{ FILE } ){
         $self->{ "TEMPLATE" } = &MyFile::get_file_content( $_[ 0 ]->{ 'SOURCE' } ) ;
-            
+
     } elsif( $_[ 0 ]->{ 'TYPE' } eq TYPE->{ STRING } ){
         $self->{ "TEMPLATE" } = $_[ 0 ]->{ 'SOURCE' } ;
     }
