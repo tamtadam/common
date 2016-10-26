@@ -2,16 +2,21 @@ use strict;
 
 use File::Copy "cp";
 use File::Copy::Recursive qw(dircopy);
+use vars qw(*mycopy);
 use File::Path;
 use File::Spec;
 use Data::Dumper;
 use feature 'state';
 use FindBin;    
 use lib $FindBin::RealBin;
-use lib $FindBin::RealBin . "/../lib";
+use lib $FindBin::RealBin . "/../cgi-bin";
 use Cfg;
 use WinLin;
 use Template;
+
+$|=1;
+*mycopy = *File::Copy::Recursive::copy;
+*File::Copy::Recursive::copy = *WinLin::mycopy_func;
 
 my $deploy = Cfg::get_struct_from_file('F:\GIT\cfg\collect_files_to_deploy.cfg');
 my $project_name = uc $ARGV[0];
