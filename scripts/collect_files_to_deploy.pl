@@ -26,8 +26,8 @@ my $target_dir = delete $deploy->{ $project_name }->{ TARGET };
 $target_dir = change_project_version($target_dir);
 
 foreach my $dir_type ( keys %{ $deploy->{ $project_name } } ) {
-    print $deploy->{ $project_name }->{ $dir_type }->{ SRC } . "\n";
-    print $target_dir . $deploy->{ $project_name }->{ $dir_type }->{ TRG } . "\n";
+    print 'from:' . $deploy->{ $project_name }->{ $dir_type }->{ SRC } . "\n";
+    print 'to  :' . $target_dir . $deploy->{ $project_name }->{ $dir_type }->{ TRG } . "\n";
     dircopy( $deploy->{ $project_name }->{ $dir_type }->{ SRC },
              $target_dir . $deploy->{ $project_name }->{ $dir_type }->{ TRG } );
 }
