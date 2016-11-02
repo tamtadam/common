@@ -36,7 +36,7 @@ sub get_project_from_path {
     return $1;
 }
 
-sub mycopy_func { 
+sub mycopy_func {
     &mycopy(@_);
     mycopy_showprogress(@_); }
 

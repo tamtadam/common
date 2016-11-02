@@ -7,6 +7,7 @@ use Data::Dumper;
 
 use FindBin;
 use lib $FindBin::RealBin;
+use lib $FindBin::RealBin . "/cgi-bin/";
 
 use DBI ;
 use CGI::Session qw/-ip-match/;
