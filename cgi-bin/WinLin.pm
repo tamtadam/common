@@ -27,7 +27,7 @@ sub get_filename {
 }
 
 sub get_target_path {
-    $_[ 0 ] =~/(.*?)$_[1]/;
+    $_[ 0 ] =~/(.*?)$_[1]/i;
     return $1;
 }
 
