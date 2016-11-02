@@ -5,6 +5,7 @@ use CGI;
 use Data::Dumper;
 use utf8;
 use JSON;
+use Encode qw(decode encode);
 our @ISA = qw();
 sub new {
     my ($class) = shift;
@@ -32,12 +33,12 @@ sub getDataFromClient {
 
     my $true = undef ;
 
-$CGI::LIST_CONTEXT_WARN = 0;
+    $CGI::LIST_CONTEXT_WARN = 0;
     for ( $self->{CGI}->param() ) {
         my $json = JSON->new->allow_nonref;
         next unless  $self->{CGI}->param($_) ;
         $result->{$_} = $json->utf8(0)->decode ($self->{CGI}->param($_));#, { utf8  => 1 } );
-         $true = 1  ;
+        $true = 1  ;
     }
     return $result;
 }
@@ -46,7 +47,7 @@ sub sendResultToClient {
     my $self = shift;
     my $data = shift;
 
-    print $data ;
+    print Encode::encode_utf8($data) ;
 }
 
 1;

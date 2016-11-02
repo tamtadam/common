@@ -11,13 +11,12 @@ use Carp;
 use Exporter 'import';
 use Data::Dumper ;
 use Time::HiRes qw(time);
-@EXPORT_OK = qw( $DB $SERVER_DFG $DBH SESS_REQED SEL_CSET INS_CSET $LOG $VIEWS GET_FUNC_NAME START STOP INS_COLLAT );
+@EXPORT_OK = qw( $DB $SERVER_CFG SESS_REQED SEL_CSET INS_CSET GET_FUNC_NAME START STOP INS_COLLAT );
 
 our $SLESH      = $^O =~ /win/i ? '\\' : '/' ;
 our $QSLESH     = quotemeta $SLESH;
 our $DB         = {}    ;
 our $SERVER_CFG = {}    ;
-our $LOG        = 1     ;
 our $start_time = undef ;
 
 
@@ -89,21 +88,20 @@ sub STOP{
 
 }
 sub SESS_REQED{
-    return $SERVER_CFG->{ 'PREREQ' }->{ $_[0] }->{'SESSION'} ;
+    return $SERVER_CFG->{my_sql}{ 'PREREQ' }->{ $_[0] }->{'SESSION'} ;
 }
 
 sub SEL_CSET{
-
-    return $SERVER_CFG->{ 'PREREQ' }->{ $_[0] }->{'CHARSET'}->{ 'SELECT' } ;
+    return $SERVER_CFG->{my_sql}{ 'PREREQ' }->{ $_[0] }->{'CHARSET'}->{ 'SELECT' } ;
 
 }
 sub INS_CSET{
-    return $SERVER_CFG->{ 'PREREQ' }->{ $_[0] }->{'CHARSET'}->{ 'INSERT' } ;
+    return $SERVER_CFG->{my_sql}{ 'PREREQ' }->{ $_[0] }->{'CHARSET'}->{ 'INSERT' } ;
 
 }
 
 sub INS_COLLAT{
-    return $SERVER_CFG->{ 'PREREQ' }->{ $_[0] }->{'CHARSET'}->{ 'COLLAT' } ;
+    return $SERVER_CFG->{my_sql}{ 'PREREQ' }->{ $_[0] }->{'CHARSET'}->{ 'COLLAT' } ;
 
 }
 
