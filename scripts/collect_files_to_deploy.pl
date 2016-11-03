@@ -47,5 +47,3 @@ sub change_project_version {
     
     return $templ->return_string();
 }
-
-print Dumper $deploy;

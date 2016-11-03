@@ -27,7 +27,7 @@ sub get_filename {
 }
 
 sub get_target_path {
-    $_[ 0 ] =~/(.*?)$_[1]/;
+    $_[ 0 ] =~/(.*?)$_[1]/i;
     return $1;
 }
 
@@ -36,7 +36,7 @@ sub get_project_from_path {
     return $1;
 }
 
-sub mycopy_func { 
+sub mycopy_func {
     &mycopy(@_);
     mycopy_showprogress(@_); }
 

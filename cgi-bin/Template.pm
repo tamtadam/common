@@ -3,6 +3,11 @@ package Template;
 use 5.010001;
 use strict;
 use warnings;
+
+use FindBin;
+use lib $FindBin::RealBin;
+use lib $FindBin::RealBin . "/cgi-bin/";
+
 use MyFile  ;
 use base 'Exporter';
 our $VERSION = '0.04';

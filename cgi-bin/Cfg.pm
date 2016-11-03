@@ -1,10 +1,7 @@
-#!/usr/bin/perl -w
-
 package Cfg;
 
 use strict;
 
-#use LockFile::Simple;
 use vars qw( $VERSION %cnf );
 
 $VERSION = '1.00';

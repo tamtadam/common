@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 use File::stat;
-our $LOG_ENABLED = 1 ;
+our $LOG_ENABLED = 0 ;
 our $VERSION = '0.02';
 
 sub new {
@@ -34,7 +34,7 @@ sub start_time{
     my $params   = $_[1] ;
     my $w_mode   = ">>"  ;
     my $file = "$pkg" . "_" . "$fv.txt";
-    my $dir = ( $self->{ 'LOG_DIR' } ? $self->{ 'LOG_DIR' } : "/home/deveushu/web_log/log/" );
+    my $dir = ( $self->{ 'LOG_DIR' } ? $self->{ 'LOG_DIR' } : './log/' );
     unless( -e $dir ){
         mkdir( $dir ) ;
     }
@@ -50,5 +50,19 @@ sub start_time{
     close LOGGER ;
     return $fv ;
 }
+
+sub end_time{
+   my $self = shift ;
+   return undef unless $LOG_ENABLED;
+
+   $_[1] =~/(\w+)::(\w+)/i ;
+   my $pkg      = $1 ;
+   my $fv       = $2 ;
+   my $file = "$pkg" . "_" . "$fv.txt";
+   my $start_time = $_[0] ;
+   my $abs = abs ( time - $start_time ) ;
+   #print "\n$pkg" . "::" . "$pkg :: $fv\n end_time: " . ( scalar localtime ) . "\n totel run time = $abs\n" ;
+}
+
 
 1;

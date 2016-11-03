@@ -18,7 +18,7 @@ sub get_file_content{
     my @result ;
     my $file_name = (ref $self ? ( $self->get_file_name() ) : ( $self ) ) ;
     open ( FILE, $file_name ) or print "File open error: $file_name" and return "" ;
-    @result = <FILE> ;    
+    @result = <FILE> ;
     close FILE ;
     wantarray ? return @result : return join( "",@result ) ;
 }
@@ -41,7 +41,7 @@ sub add_content{
 }
 
 sub empty_content{
-    $_[ 0 ]->{ "file_content" } = "" ;  
+    $_[ 0 ]->{ "file_content" } = "" ;
 }
 
 sub print_to_file{
