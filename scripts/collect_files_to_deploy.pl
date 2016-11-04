@@ -19,30 +19,35 @@ $|=1;
 *File::Copy::Recursive::copy = *WinLin::mycopy_func;
 
 my $deploy = Cfg::get_struct_from_file('F:\GIT\cfg\collect_files_to_deploy.cfg');
-my $project_name = uc $ARGV[0];
-my $version = $ARGV[1];
+my $project_name = uc $ARGV[ 0 ];
+my $version      =    $ARGV[ 1 ];
+my $component    =    $ARGV[ 2 ] // '';
 
 my $target_dir = delete $deploy->{ $project_name }->{ TARGET };
-$target_dir = change_project_version($target_dir);
+$target_dir    = change_project_version($target_dir);
 
 foreach my $dir_type ( keys %{ $deploy->{ $project_name } } ) {
+    next unless $deploy->{ $project_name }->{ $dir_type }->{ SRC } =~/$component/;
+
     print 'from:' . $deploy->{ $project_name }->{ $dir_type }->{ SRC } . "\n";
     print 'to  :' . $target_dir . $deploy->{ $project_name }->{ $dir_type }->{ TRG } . "\n";
     dircopy( $deploy->{ $project_name }->{ $dir_type }->{ SRC },
-             $target_dir . $deploy->{ $project_name }->{ $dir_type }->{ TRG } );
+             $target_dir . ( !$component ? $deploy->{ $project_name }->{ $dir_type }->{ TRG } : '') );
+
 }
 
 sub change_project_version {
     state $templ = Template->new({
         "TYPE"   => Template::TYPE->{ STRING }, 
-        "SOURCE" => "pid_t TASK_NAME_tid= -1;",
+        "SOURCE" => "",
     }) ;
     my $string = shift;
     $templ->change_source($string);
 
     $templ->fill_in({
         PROJECT_NAME => $project_name,
-        VERSION_NUM  => $version
+        VERSION_NUM  => $version,
+        COMPONENT    => $component,
     });
     
     return $templ->return_string();
