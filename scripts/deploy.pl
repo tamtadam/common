@@ -10,26 +10,37 @@ use Template;
 
 my $win2lin = Cfg::get_struct_from_file('F:\GIT\cfg\win2lin.cfg');
 
-my $project_name = uc $ARGV[0];
-my $version      =    $ARGV[1];
-my $component    =    $ARGV[ 2 ] // '';
-my $src          = $win2lin->{ $project_name }{ SRC };
+my $project_name = uc ($ARGV[ 0 ] || 'ontozo');
+my $version      =    $ARGV[ 1 ] || 'v2_0_2';
+my @components   =    $ARGV[ 2 ] // qw(cgi-bin htdocs docs sql tools);
 
-$src = change_project_version($src);
+my ($src, $target_dir, $host, $cmd);
 
-my $target_dir = $win2lin->{ $project_name }{ TARGET_DIR } . $component . '/' . $version . '/';
+foreach my $component ( @components ) {
+    $src        = change_project_version($win2lin->{ $project_name }{ SRC }, $component);
+    next unless -e $src;
 
-my $host = $win2lin->{ $project_name }{USER} . '@' . $win2lin->{ $project_name }{IP};
-my $cmd  = $win2lin->{ $project_name }{SCP} . q{ } . " -i " . $win2lin->{ $project_name }{PRIVKEY} . " -r -p " . $src . q{ } . $host . ':' .$target_dir;
-print $cmd . "\n";
-system $cmd;
+    $target_dir = $win2lin->{ $project_name }{ TARGET_DIR } . $component . '/' . $version;
+    $host       = $win2lin->{ $project_name }{USER} . '@' . $win2lin->{ $project_name }{IP};
+    $cmd        = $win2lin->{ $project_name }{SCP} .
+                  q{ } .
+                  " -i " . $win2lin->{ $project_name }{PRIVKEY} .
+                  " -v -r -p " .
+                  $src . q{ } .
+                  $host . ':' . $target_dir;
+
+    print $cmd . "\n";
+    system $cmd;
+}
+
 
 sub change_project_version {
     state $templ = Template->new({
-        "TYPE"   => Template::TYPE->{ STRING }, 
+        "TYPE"   => Template::TYPE->{ STRING },
         "SOURCE" => "",
     }) ;
-    my $string = shift;
+    my $string    = shift;
+    my $component = shift;
     $templ->change_source($string);
 
     $templ->fill_in({
@@ -37,6 +48,6 @@ sub change_project_version {
         VERSION_NUM  => $version,
         COMPONENT    => $component,
     });
-    
+
     return $templ->return_string();
 }

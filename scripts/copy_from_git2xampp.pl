@@ -23,9 +23,11 @@ my $file_name = WinLin::get_filename($targetfile);
 my $project_tmpl = WinLin::get_project_from_path($targetfile, $apache_cfg->{SOURCE} );
 $targetfile =~s~$project_tmpl~~i;
 print $targetfile . " target_file\n";
+
 if ($project_tmpl =~/common/ ) {
     $targetfile =~s/common//;
 }
+
 $targetfile =~s~$project_tmpl~~;
 $targetfile =~s~$apache_cfg->{SOURCE}~~i;
 $targetfile =~/\/(.*?)\/(.*)$/i;
