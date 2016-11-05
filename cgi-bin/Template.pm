@@ -50,6 +50,7 @@ sub init{
 
 sub change_source {
     my $self = shift;
+    delete $self->{ STRING } ;
     $self->{ "TEMPLATE" } = shift // '';
 }
 
