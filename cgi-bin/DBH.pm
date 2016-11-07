@@ -53,6 +53,7 @@ sub time_to_db{
 
 sub my_insert {
     my $self        = shift;
+    $self->start_time( @{ [ caller(0) ] }[3], \@_ ) ;
     $self->{ 'DB_HANDLE' } = $DB if $DB and !defined $self->{ 'DB_HANDLE' }  ;
     my $select_data = {} ;
     my $data        = shift;
@@ -327,7 +328,13 @@ sub create_question_mark_list {
     foreach my $sql_type ( "where", "insert", "params" ){
         if( $params->{ $sql_type } ){
             if( "HASH" eq ref $params->{ $sql_type } ){
-                $kerdojel .= " ?, " for keys %{ $params->{ $sql_type } };
+                 for my $item ( keys %{ $params->{ $sql_type } } ) {
+                    if ( 'SCALAR' eq ref $params->{ $sql_type }->{ $item } ) {
+                        $kerdojel .= ${ $params->{ $sql_type }->{ $item } } . ", ";
+                    } else {
+                        $kerdojel .= " ?, ";
+                    }
+                }
             } else {
                 $kerdojel = "" ;
                 $kerdojel .= " ?," foreach split ( ",", $params->{ $sql_type } );
@@ -351,7 +358,8 @@ sub create_where_param {
     my $select_insert_fields = $data->{'where'}    ? ('where') : ('insert');
 
     return ( "", "" ) if scalar keys %{ $data->{$select_insert_fields} } == 0;
-    for ( keys %{ $data->{$select_insert_fields} } ) {
+
+    for ( grep { 'SCALAR' ne ref $data->{ $select_insert_fields }->{ $_ } } keys %{ $data->{$select_insert_fields} } ) {
         if ( 'ARRAY' eq ref $data->{$select_insert_fields}->{$_} ) {
             for my $faktor_id ( @{ $data->{$select_insert_fields}->{$_} } ) {
                 $where .= $_ . " = " . ("?") . " $relation ";
@@ -391,7 +399,7 @@ sub create_param_list {
 
     if( "HASH" eq ref $data->{ $insert_or_call_param } ){
         return ("") if scalar keys %{ $data->{ $insert_or_call_param } } == 0;
-        for ( keys %{ $data->{ $insert_or_call_param } } ) {
+        for ( grep { 'SCALAR' ne ref $data->{ $insert_or_call_param }->{ $_ } } keys %{ $data->{ $insert_or_call_param } } ) {
             $where .= $data->{ $insert_or_call_param }->{$_} . $PARAM_DELIMITER;
             push @ret_array, $data->{ $insert_or_call_param }->{$_}  ;
         }
