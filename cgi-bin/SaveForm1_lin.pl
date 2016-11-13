@@ -12,12 +12,12 @@ use View_ajax;
 use Controller_ajax;
 use Data::Dumper ;
 
-my $relay_db = &DBConnHandler::init( "relay.cfg" );
+my $db = &DBConnHandler::init( "server.cfg" );
 
 my $ajax       = View_ajax->new()      ;
 my $controller = Controller_ajax->new( {
-                                        'DB_HANDLE' => $relay_db ,
-                                        'MODEL'     => "ontozo_model",
+                                        'DB_HANDLE' => $db ,
+                                        #'MODEL'     => "ontozo_model",
                                         'LOG_DIR'   => "/log/",
 } );
 
