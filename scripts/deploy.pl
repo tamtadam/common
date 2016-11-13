@@ -9,7 +9,7 @@ use Cfg ;
 use Template ;
 use utf8;
 
-my $win2lin = Cfg::get_struct_from_file( 'F:\GIT\cfg\win2lin.cfg' ) ;
+my $win2lin = Cfg::get_struct_from_file( $ENV{GIT_ROOT} . '\cfg\win2lin.cfg' ) ;
 
 my $project_name = uc( $ARGV[ 0 ] || 'ontozo' ) ;
 my $version = $ARGV[ 1 ] || 'v2_0_2' ;
