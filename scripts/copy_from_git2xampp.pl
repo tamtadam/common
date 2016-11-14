@@ -11,7 +11,7 @@ use Cfg;
 use WinLin;
 use Data::Dumper;
 
-my $apache_cfg = Cfg::get_struct_from_file('F:\GIT\cfg\apache_locale.cfg');
+my $apache_cfg = Cfg::get_struct_from_file( $ENV{GIT_ROOT} . '\cfg\apache_locale.cfg');
 
 $apache_cfg = $apache_cfg->{APACHE};
 my ($targetfile, $src_file);

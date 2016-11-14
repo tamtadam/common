@@ -18,7 +18,7 @@ $|=1;
 *mycopy = *File::Copy::Recursive::copy;
 *File::Copy::Recursive::copy = *WinLin::mycopy_func;
 
-my $deploy = Cfg::get_struct_from_file('F:\GIT\cfg\collect_files_to_deploy.cfg');
+my $deploy = Cfg::get_struct_from_file($ENV{GIT_ROOT} . '\cfg\collect_files_to_deploy.cfg');
 my $project_name = uc ($ARGV[ 0 ] || 'ontozo');
 my $version      =    $ARGV[ 1 ] || 'v2_0_2';
 my @components   =    $ARGV[ 2 ] // qw(cgi-bin htdocs tools docs sql tools);
