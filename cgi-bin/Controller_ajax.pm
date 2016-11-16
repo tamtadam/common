@@ -56,7 +56,11 @@ sub start_action {
         
     }
 
-    for ( sort keys %{$received_data} ) {
+    for ( sort {
+        $received_data->{ $b }->{ 'order' } <=>
+        $received_data->{ $a }->{ 'order' }
+        } keys %{$received_data} ){
+
         
       next if ( ( $_ eq "session_data" ) or ( $_ eq "project" ) );
 
@@ -73,6 +77,7 @@ sub start_action {
       }
 
       START;
+        delete $received_data->{ $_ }->{'order'} ;
       $return_value->{$_} = $self->$_( $received_data->{$_} );
          $self->start_time( @{ [ caller(0) ] }[3], $return_value ) if $LOG;
 

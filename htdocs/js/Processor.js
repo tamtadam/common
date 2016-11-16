@@ -1,14 +1,13 @@
 function push_cmd(key, value) {
 	PROC_ARRAY[key] = value;
+
 }
 
 function send_cmd( async_ ) {
 	console.log( PROC_ARRAY );
 
-	push_cmd( "project", JSON.stringify( { 'PROJECT_NAME' : PROJECT_NAME } ) );
-
 	result = AJAX_req({
-			'url' : '/cgi-bin/' + CGI_PATH + ( getOS() === 'Windows' ? '/SaveForm1_win.pl' : '/SaveForm1_lin.pl'),
+			'url' : '/cgi-bin/' + CGI_PATH + '/' + CGI_SCRIPT),
 			'data' : PROC_ARRAY
 		},
 		async_

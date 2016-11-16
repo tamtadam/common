@@ -1,9 +1,5 @@
 #!/usr/bin/perl
 
-##
-##  printenv -- demo CGI program which just prints its environment
-##
-
 use strict;
 use warnings;
 use DBConnHandler;
