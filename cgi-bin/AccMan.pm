@@ -7,7 +7,7 @@ use Data::Dumper;
 use Log;
 our @ISA = qw( Log );
 use utf8;
-use DBConnHandler qw( SESS_REQED $VIEWS $LOG SEL_CSET INS_CSET GET_FUNC_NAME ); 
+use DBConnHandler qw( SESS_REQED SEL_CSET INS_CSET GET_FUNC_NAME );
 
 sub new {
     my $instance = shift;
@@ -26,7 +26,7 @@ sub init{
     eval '$self->' . "$_" . '::init( @_ )' for @ISA;
 
     $self->{DB_HANDLE} = $_[0]->{DB_HANDLE};
-    $self->start_time( @{ [ caller(0) ] }[3], \@_ ) if $LOG;
+    $self->start_time( @{ [ caller(0) ] }[3], \@_ );
 
     $self;
 }
@@ -34,10 +34,10 @@ sub init{
 
 sub LogOut{
     my $self  = shift ;
-    $self->start_time( @{ [ caller(0) ] }[3], \@_ ) if $LOG;
+    $self->start_time( @{ [ caller(0) ] }[3], \@_ );
     my $data = shift ;
-    $self->start_time( @{ [ caller(0) ] }[3], $data ) if $LOG;
-    
+    $self->start_time( @{ [ caller(0) ] }[3], $data );
+
     $self->{'DB_Session'}->delete_session( $data->{'session'} ) ;
 
     return {} ;
@@ -45,14 +45,14 @@ sub LogOut{
 
 sub LoginForm{
     my $self = shift ;
-    $self->start_time( @{ [ caller(0) ] }[3], \@_ ) if $LOG;
+    $self->start_time( @{ [ caller(0) ] }[3], \@_ );
 
     my $data = shift ;
     my $login;
     if( $login = $self->{'DB_Session'}->check_password( $data ) ){
         $login = $self->{'DB_Session'}->save_session({
-            'login' => $login ,      
-        }); 
+            'login' => $login ,
+        });
     }
     return $login ;
 }
@@ -60,7 +60,7 @@ sub LoginForm{
 sub ActivateUser{
    my $self = shift;
    my $data = shift;
-    
+
    my $my_update = $self->my_update(
             {
                'update' => { 'activated' => 1 },
@@ -73,17 +73,17 @@ sub ActivateUser{
          );
    if ( $my_update == '0E0' )
    {
-       return undef ;   
+       return undef ;
    }
    else
    {
-        return $my_update ; 
+        return $my_update ;
    }
 }
 
 sub SaveNewUser {
    my $self = shift;
-   $self->start_time( @{ [ caller(0) ] }[3], \@_ ) if $LOG;
+   $self->start_time( @{ [ caller(0) ] }[3], \@_ );
 
    my $data = $_[ 0 ]->{ "SaveNewUser" };
 
@@ -96,8 +96,8 @@ sub SaveNewUser {
    $sth->execute( $data->{'email'} ) or die "ERROR\n";
 
    my $result = $sth->fetchrow_hashref();
-   
-   return { 
+
+   return {
     'partner_login' => 0 } if $result->{'email'};
    utf8::decode( $data->{ $_ } ) foreach keys %{ $data } ;
    my $insert_data = {
@@ -105,7 +105,7 @@ sub SaveNewUser {
       'name'      => $data->{'uname'},
       'jelszo'    => $data->{'password'},
       'login_nev' => $data->{'felhname'},
-      'activated' => 0        
+      'activated' => 0
    };
 
    my $partner_id = $self->my_insert(
@@ -115,7 +115,7 @@ sub SaveNewUser {
          'select' => 'partner_id',
       }
    );
-   
+
    my $login = {
       'partner_login' => $partner_id,
       'email'         => $data->{'email'} ,

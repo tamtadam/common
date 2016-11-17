@@ -4,8 +4,6 @@ var TIMES_MAX = 8            ;
 var ERRORS     = new Array()  ;
 var ERRORS_MAX = 4            ;
 
-
-//OK
 function error_messages_and_server_comm_times( datas )
 {
 	var p ;

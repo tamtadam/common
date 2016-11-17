@@ -7,7 +7,7 @@ function send_cmd( async_ ) {
 	console.log( PROC_ARRAY );
 
 	result = AJAX_req({
-			'url' : '/cgi-bin/' + CGI_PATH + '/' + CGI_SCRIPT),
+			'url' : '/cgi-bin/' + CGI_PATH + '/' + CGI_SCRIPT,
 			'data' : PROC_ARRAY
 		},
 		async_
@@ -34,7 +34,9 @@ function processor(data_to_process, ret_val) {
     }
     if ( data_to_process != null && data_to_process != null && data_to_process[ 'time' ] ){
     	print_measure( data_to_process[ 'time' ] ) ;
-    	FUNCTIONS[ cmd ]( data_to_process[cmd] ) ;
+    	if ( FUNCTIONS && FUNCTIONS[ cmd ] ) {
+        	FUNCTIONS[ cmd ]( data_to_process[cmd] ) ;
+    	}
     }
 		
     return ret_val ;

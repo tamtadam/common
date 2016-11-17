@@ -40,11 +40,12 @@ foreach my $component ( @components ) {
 
     print $cmd . "\n" ;
 
-    #system $cmd;
+    system $cmd;
 
     create_link( $component, $target_dir ) ;
 
 } ## end foreach my $component ( @components)
+execute_command( 'chmod 755 /var/www/cgi-bin/SaveForm1_lin.pl' );
 
 sub create_dir_structure {
     my $target = shift ;
@@ -59,10 +60,8 @@ sub create_link {
     print "LINK NAME:" . $link_name . "\n" ;
     print "LINK TO  :" . $target . "\n" ;
 
-    execute_command( "whoami" );
-    execute_command( 'pwd' );
     execute_command( 'cd /var/www/' );
-    execute_command( 'rm ' . lc $link_name );
+    execute_command( 'rm /var/www/' . lc $link_name );
     execute_command( 'ln -s ' . $target . " " . '/var/www/' . lc $link_name );
     execute_command( 'pwd' );
 } ## end sub create_link
