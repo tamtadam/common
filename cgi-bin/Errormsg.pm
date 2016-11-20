@@ -15,6 +15,7 @@ use constant {
 
 my $ERROR_CODES = {
     "DB_SELECT"                => "Selection from db. does not response",
+    "SESSIONREQ"               => "You are not logged in",
 } ;
 
 sub new {
@@ -53,7 +54,7 @@ sub get_error_text{
 
 sub get_errors{
     my $self = shift ;
-    return $self->{ 'ERROR_CODES' } ;
+    return $self->{ 'ERROR_CODES' } || {};
 }
 
 sub empty_errors{

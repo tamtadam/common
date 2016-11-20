@@ -1,63 +1,64 @@
-package View_ajax;
+package View_ajax ;
 
-use strict;
-use Data::Dumper;
+use strict ;
+use Data::Dumper ;
 
-use FindBin;
+use FindBin ;
 use lib $FindBin::RealBin;
-use lib $FindBin::RealBin . "/cgi-bin/";
+use lib $FindBin::RealBin . "/cgi-bin/" ;
 
-use Ajax;
+use Ajax ;
 use Log ;
-use JSON;
-our @ISA = qw( Log Ajax );
+use JSON ;
+our @ISA = qw( Log Ajax ) ;
 
 my $log = undef ;
-sub new {
-    my $instance = shift;
-    my $class    = ref $instance || $instance;
-    my $self     = {};
 
-    bless $self, $class;
-    $self->init;
-    $self;
-}
+sub new {
+    my $instance = shift ;
+    my $class    = ref $instance || $instance ;
+    my $self     = {} ;
+
+    bless $self, $class ;
+    $self->init ;
+    $self ;
+} ## end sub new
 
 sub init {
-    my $self = shift;
-    eval '$self->' . "$_" . '::init' for @ISA;
-    $self->start_time( @{ [ caller(0) ] }[3], \@_ ) if $log;
+    my $self = shift ;
+    eval '$self->' . "$_" . '::init' for @ISA ;
+    $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], \@_ ) if $log ;
 
-    $self;
-}
+    $self ;
+} ## end sub init
 
 sub send_data_to_server {
-    my $self        = shift;
-    $self->start_time( @{ [ caller(0) ] }[3], \@_ ) if $log;
+    my $self = shift ;
+    $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], \@_ ) if $log ;
 
-    my $data        = shift;
-    my $encode_type = "JSON";
+    my $data        = shift ;
+    my $encode_type = "JSON" ;
     my $send_data ;
     if ( "JSON" eq $encode_type ) {
 
         return undef if ( 'SCALAR' eq ref $data ) ;
-        return undef unless ref $data;
-        $send_data = JSON->new->allow_nonref->encode ( $data ) ;
+        return undef unless ref $data ;
+        $send_data = JSON->new->allow_nonref->encode( $data ) ;
 
-        $self->sendResultToClient($send_data);
-    }
-}
+        $self->sendResultToClient( $send_data ) ;
+    } ## end if ( "JSON" eq $encode_type)
+} ## end sub send_data_to_server
 
 sub get_data_from_server {
-    my $self         = shift;
-    $self->start_time( @{ [ caller(0) ] }[3], \@_ ) if $log;
+    my $self = shift ;
+    $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], \@_ ) if $log ;
 
-    my $needed_param = shift;
+    my $needed_param = shift ;
 
-    my $needed_valus = $self->getDataFromClient($needed_param);
+    my $needed_valus = $self->getDataFromClient( $needed_param ) ;
 
-    return $needed_valus;
-}
+    return $needed_valus ;
+} ## end sub get_data_from_server
 
-1;
+1 ;
 

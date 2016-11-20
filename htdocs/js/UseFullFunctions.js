@@ -31,6 +31,9 @@ function error_messages_and_server_comm_times( datas )
 	
 	if( datas != null )
 	{
+		if(!document.getElementById( "error" )) {
+			alert( 'No target for error' );
+		}
 		document.getElementById( "error" ).innerHTML = "" ;
 
 	    for ( var cmd in TIMES ) {

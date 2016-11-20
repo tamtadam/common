@@ -11,7 +11,7 @@ use Carp ;
 use Exporter 'import' ;
 use Data::Dumper ;
 use Time::HiRes qw(time) ;
-@EXPORT_OK = qw( $DB $SERVER_CFG SESS_REQED SEL_CSET INS_CSET GET_FUNC_NAME START STOP INS_COLLAT ) ;
+@EXPORT_OK = qw( $DB $SERVER_CFG SESS_REQED SEL_CSET INS_CSET GET_FUNC_NAME START STOP INS_COLLAT NO_SESSION ) ;
 
 our $SLESH      = $^O =~ /win/i ? '\\' : '/' ;
 our $QSLESH     = quotemeta $SLESH ;
@@ -85,8 +85,12 @@ sub STOP {
 } ## end sub STOP
 
 sub SESS_REQED {
-    return $SERVER_CFG->{ my_sql }{ 'PREREQ' }->{ $_[ 0 ] }->{ 'SESSION' } ;
+    return get_my_sql_config()->{ SESSION };
 } ## end sub SESS_REQED
+
+sub NO_SESSION {
+    return get_my_sql_config()->{ PREREQ }{ $_[ 0 ] }{ NO_SESSION };
+}
 
 sub SEL_CSET {
     return $SERVER_CFG->{ my_sql }{ 'PREREQ' }->{ $_[ 0 ] }->{ 'CHARSET' }->{ 'SELECT' } ;

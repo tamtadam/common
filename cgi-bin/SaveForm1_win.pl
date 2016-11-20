@@ -17,7 +17,6 @@ my $controller = Controller_ajax->new( {
                                         'LOG_DIR'   => "/log/",
 } );
 
-
 my $struct;
 my $data;
 
