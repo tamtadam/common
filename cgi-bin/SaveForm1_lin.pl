@@ -14,7 +14,7 @@ my $ajax       = View_ajax->new()      ;
 my $controller = Controller_ajax->new( {
                                         'DB_HANDLE' => $db ,
                                         #'MODEL'     => "ontozo_model",
-                                        'LOG_DIR'   => "/log/",
+                                        'LOG_DIR'   => "./log/",
 } );
 
 my $struct;
