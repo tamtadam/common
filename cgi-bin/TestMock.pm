@@ -3,8 +3,12 @@ package TestMock ;
 use strict ;
 use warnings ;
 
-use Carp qw( confess ) ;
+use FindBin ;
+use lib $FindBin::RealBin;
+use lib $FindBin::RealBin . "/cgi-bin/" ;
 
+use Carp qw( confess ) ;
+use Data::Dumper;
 use feature qw( state ) ;
 
 use FindBin ;
@@ -138,11 +142,10 @@ sub set_test_dependent_db {
     my $sqlite_to_mock = shift || do {
         die 'Test DB env. variable is not set' unless $ENV{ TEST_SQLITE } ;
         my $sq = &convert_filename_to_sqlite_path( ( caller( 0 ) )[ 1 ] ) ;
-
         copy_test_db( $ENV{ TEST_SQLITE }, $sq ) ;
+        $sq;
     } ;
     $ENV{ TEST_SQLITE } = $sqlite_to_mock ;
-
 } ## end sub set_test_dependent_db
 
 sub copy_test_db {
@@ -171,7 +174,7 @@ sub remove_test_db {
 
 sub convert_filename_to_sqlite_path {
     my $file = shift ;
-    $file =~ s{.*/}{} ;
+    $file =~ s{(.*?)\.(.*)$}{$1};
     return "$file.sqlite" ;
 } ## end sub convert_filename_to_sqlite_path
 

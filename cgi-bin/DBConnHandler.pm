@@ -10,12 +10,13 @@ use Cfg ;
 use Carp ;
 use Exporter 'import' ;
 use Data::Dumper ;
+use MyFile;
 use Time::HiRes qw(time) ;
 @EXPORT_OK = qw( $DB $SERVER_CFG SESS_REQED SEL_CSET INS_CSET GET_FUNC_NAME START STOP INS_COLLAT NO_SESSION ) ;
 
 our $SLESH      = $^O =~ /win/i ? '\\' : '/' ;
 our $QSLESH     = quotemeta $SLESH ;
-our $DB         = {} ;
+our $DB         = undef ;
 our $SERVER_CFG = {} ;
 our $start_time = undef ;
 
@@ -23,41 +24,53 @@ BEGIN {
     use strict ;
 } ## end BEGIN
 
+sub disconnect {
+    $DB->disconnect() if $DB ;
+}
+
 END {
-    $DB->disconnect() ;
+    $DB->disconnect() if $DB ;
 } ## end END
 
 sub init {
     my $project_cfg = shift ;
 
-    $SERVER_CFG->{ my_sql } = Cfg::get_struct_from_file( $project_cfg )->{ DATABASE } ;
-
+    $SERVER_CFG->{ my_sql } = ( $project_cfg ? Cfg::get_struct_from_file( $project_cfg )->{ DATABASE } : {} ) ;
     $DB = DBI->connect(
-                        get_data_src(),
+                        @{ get_data_src() },
                         {
                            RaiseError => 1,
                            PrintWarn  => 0,
                            PrintError => 0
                         }
                       )
-      or print "ERROR in db connection\n" . Dumper $SERVER_CFG->{ my_sql } ;
+        or print "ERROR in db connection\n" . Dumper ( $SERVER_CFG->{ my_sql } || $ENV{ TEST_SQLITE } );
     return $DB ;
 } ## end sub init
 
+sub init_sqlite_db {
+    my @tables = @_ ;
+    my $sql;
+    for my $table ( @tables ) {
+        $sql = MyFile::get_file_content( $table );
+        my $gth = $DB->prepare( $sql );
+        $gth->execute();
+    }
+}
+
 sub get_data_src {
-    return get_test_data_src() || get_normal_data_src() ;
+    return ( get_test_data_src() or get_normal_data_src() ) ;
 } ## end sub get_data_src
 
 sub get_test_data_src {
     my $test_env = $ENV{ TEST_SQLITE } || return ;
-
-    return 'dbi:SQLite::dbname=' . $test_env ;
+    return [ 'dbi:SQLite:dbname=' . $test_env, "", "" ] ;
 } ## end sub get_test_data_src
 
 sub get_normal_data_src {
     my $cfg = get_my_sql_config() ;
-    return ( "dbi:$cfg->{PLATFORM}:dbname=$cfg->{DATABASE};host=$cfg->{HOST};port=$cfg->{PORT};",
-             "$cfg->{USER}", "$cfg->{PWD}" ) ;
+    return [ "dbi:$cfg->{PLATFORM}:dbname=$cfg->{DATABASE};host=$cfg->{HOST};port=$cfg->{PORT};",
+             "$cfg->{USER}", "$cfg->{PWD}" ] ;
 } ## end sub get_normal_data_src
 
 sub get_my_sql_config {
