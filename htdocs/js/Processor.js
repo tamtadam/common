@@ -16,13 +16,11 @@ function send_cmd( async_ ) {
 	return result;
 }
 
-function processor(data_to_process, ret_val) {
+function processor(data_to_process) {
 	console.log( data_to_process ) ;
-
+	var ret_val = new Object();
     for ( var cmd in data_to_process) {
-      if( ret_val != null && ret_val[ cmd ] != null ){
 	  	ret_val[ cmd ] = data_to_process[ cmd ] ;
-      }
 	}
 
     if(  data_to_process != null && data_to_process[ 'errors' ] && data_to_process[ 'time' ] )
