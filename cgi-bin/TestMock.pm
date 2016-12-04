@@ -10,6 +10,7 @@ use lib $FindBin::RealBin . "/cgi-bin/" ;
 use Carp qw( confess ) ;
 use Data::Dumper;
 use feature qw( state ) ;
+use vars qw($AUTOLOAD);
 
 use FindBin ;
 use File::Copy qw( copy ) ;
@@ -107,7 +108,7 @@ sub mock {
     my $package  = $self->{ _package } ;
     my $function = q{} ;
 
-    $self->{ IO }{ $_{ 0 } } = {
+    $self->{ IO }{ $_[ 0 ] } = {
                                  IN      => [],
                                  OUT     => [],
                                  OLD_SUB => undef,
@@ -129,9 +130,9 @@ sub mock {
 
         } else {
             $function = '*' . $package . '::' . $_[ 0 ] . ' = sub {
-                $self->check_in_out_params( @_, \'' . $_[ 0 ] . '\';
+                $self->check_in_out_params( @_, \'' . $_[ 0 ] . '\');
             }' ;
-            eval $function ;
+            eval $function;
 
         } ## end else [ if ( ref $_[ 1 ] eq 'CODE')]
     } ;
@@ -162,7 +163,6 @@ sub copy_test_db {
 
 sub remove_test_db {
     my $test_db = &convert_filename_to_sqlite_path( ( caller( 0 ) )[ 1 ] ) ;
-
     -e $test_db or confess "$test_db doesn't exist" ;
 
     for my $trial ( 1 .. $MAX_NUM_OF_FILE_OP_TRIAL ) {
@@ -342,14 +342,24 @@ sub get_input_values {
 
 } ## end sub get_input_values
 
+sub function_is_mocked {
+    my $self     = shift ;
+    my $function = shift ;
+    
+    if ( !defined $function ||
+         !defined $self->{ IO }{ $function } ) {
+        return 0;    
+    } else {
+        return 1;    
+    }
+}
 sub _get_input_value {
     my $self     = shift ;
     my $function = shift ;
 
     my $all_inputs = shift // q{} ;
 
-    if (    !defined $function
-         || !defined $self->{ IO }{ $function } )
+    if ( !$self->function_is_mocked( $function ) )
     {
         confess "function is missing from parameter or \$obj->mock cakk is missing\n" ;
     } ## end if ( !defined $function...)
@@ -358,7 +368,7 @@ sub _get_input_value {
         confess 'input buffer is empty for: ' . $function ;
     } ## end if ( $self->count_input_buffer...)
 
-    return $all_inputs eq $ALL_INPUTS ? $self->{ IO }{ $function }{ IN } : shift @{ $self->{ IO }{ $function }{ IN } } ;
+    return $all_inputs eq $ALL_INPUTS ? @{ $self->{ IO }{ $function }{ IN } }: shift @{ $self->{ IO }{ $function }{ IN } } ;
 
 } ## end sub _get_input_value
 
@@ -369,6 +379,13 @@ sub input_values_contain {
 
     return [ grep { /$match/ } @{ $inputs } ]->[ 0 ] ;
 } ## end sub input_values_contain
+
+sub empty_buffers {
+    my $self     = shift ;
+    my $function = shift ;
+
+    $self->empty_buffer( $function, $_ ) for qw(IN OUT);
+}
 
 sub empty_in_buffer {
     my $self     = shift ;
@@ -443,6 +460,24 @@ sub get_result_of_fcgi {
              json => $res_s
            } ;
 
+}
+
+sub AUTOLOAD {
+    my $self = shift;
+
+    my ( $class, $function ) = ( $AUTOLOAD =~ /^(.*?)::(.*?)$/) ;
+    
+    if ( !$self->function_is_mocked( $function ) ) {
+        $self->mock( $function );
+    }
+    
+    if ( @_ ) {
+        $self->add_return_value( $function, @_ );
+    
+    } else {
+        return ( wantarray ? $self->get_input_values( $function ):
+                             $self->get_input_value( $function ) );    
+    }
 }
 
 1 ;

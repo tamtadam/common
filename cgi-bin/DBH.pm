@@ -85,14 +85,15 @@ sub my_insert {
                 my $res = $self->my_select( $select_data ) ;
                 return $res ;
             } else {
-
+                $self->add_error( 'DB_ERROR', $@ );
+                return;
             } ## end else [ if ( $@ =~ /Duplicate entry \'(.*?)\' for key \'(.*?)_UNIQUE\'/)]
         } ## end if ( $@ )
 
         $res ? ( return $self->my_last_insert_id( $table ) ) : ( undef ) ;
 
     } else {
-        return undef ;
+        return ;
     } ## end else [ if ( $gth ) ]
 
 } ## end sub my_insert
@@ -109,8 +110,6 @@ sub my_update {
     my $params ;
     my $where_cl ;
 
-    #open( OUT, ">>c:\\xampp\\cgi-bin\\new_struct\\log\\my_update.txt" );
-
     if ( defined $data->{ 'where_param' } ) {
         $params   = $data->{ 'where_param' } ;
         $where_cl = $data->{ 'where' } ;
@@ -119,22 +118,21 @@ sub my_update {
     } ## end else [ if ( defined $data->{ ...})]
     my $field = @{ [ keys %{ $data->{ update } } ] }[ 0 ] ;
 
-    #print OUT "\n";
-    #print OUT "command : UPDATE $table SET $field = ? $where_cl";
-    #print OUT "param:  \n";
-    #print OUT Dumper $data->{update}->{$field}, @{ [ split( ",", $params ) ] };
-    #print OUT "-" x 30;
-    #print OUT "\n";
     $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], "UPDATE $table SET $field = ? $where_cl" ) ;
 
     my $gth = $self->{ 'DB_HANDLE' }->prepare( "UPDATE $table SET $field = ? $where_cl" ) ;
     $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], "UPDATE $table SET $field = ? $where_cl" ) ;
     $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], [ $data->{ 'update' }->{ $field }, $params ] ) ;
-    my $res = $gth->execute( $data->{ 'update' }->{ $field }, @{ [ split( $PARAM_DELIMITER, $params ) ] } ) ;
+    my $res; 
+    eval {
+        $res = $gth->execute( $data->{ 'update' }->{ $field }, @{ [ split( $PARAM_DELIMITER, $params ) ] } ) ;
+    };
 
-    #print Dumper "UPDATE $table SET $field = ? $where_cl";
-    #print OUT Dumper $res;
-    #close OUT;
+    if ( $@ ) {
+        $self->add_error( 'DB_ERROR', $@ );
+        return;
+    } ## end if ( $@ )
+
 } ## end sub my_update
 
 sub my_call {
@@ -222,7 +220,7 @@ sub my_select {
     if ( defined( $gth ) ) {
 
         #print Dumper $gth ;
-
+        $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], $params);
         my $res = $gth->execute( @{ [ split( $PARAM_DELIMITER, $params ) ] } ) ;
 
         while ( $res = $gth->fetchrow_hashref ) {
@@ -511,6 +509,16 @@ sub disconnect {
 sub parameter_kezelo {
     'SCALAR' eq ref $_[ 1 ] ? ${ ( $_[ 1 ] ) } : $_[ 1 ] ;
 } ## end sub parameter_kezelo
+
+sub execute_sql {
+    my $self   = shift;
+    my $sql    = shift || return;
+    my @params = shift;
+
+    my $gth = $self->{ 'DB_HANDLE' }->prepare($sql) ;
+    return $gth->execute(@params) ;
+}
+
 
 sub empty_tables {
     my $self = shift ;
