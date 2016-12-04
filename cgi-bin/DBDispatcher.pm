@@ -96,7 +96,7 @@ sub dispatcher {
             my_sql => sub { return 'CONVERT(' . $_[ 0 ] . ', CHAR(50))' ;},
             sqlite => sub { return 'CAST(' . $_[ 0 ] . ' as text'; },
         },
-        SQLSAFEUPDATES=> {
+        SQLSAFEUPDATES => {
             my_sql => sub { return "SET SQL_SAFE_UPDATES = " . $_[ 0 ] ;},
             sqlite => sub { return "" },
         },

@@ -3,7 +3,7 @@ use strict ;
 use warnings ;
 use Data::Dumper ;
 use File::stat ;
-our $LOG_ENABLED = 0 ;
+our $LOG_ENABLED = 1 ;
 our $LOG_TO_STDOUT = 0 ;
 our $VERSION     = '0.02' ;
 
@@ -25,7 +25,7 @@ sub init {
 sub start_time {
     my $self = shift ;
 
-    return undef unless $ENV{ LOG_ENABLED };
+    return undef unless $LOG_ENABLED;
 
     $_[ 0 ] =~ /(\w+)::(\w+)/i ;
     my $pkg = $1 ;

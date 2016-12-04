@@ -123,7 +123,7 @@ sub my_update {
     my $gth = $self->{ 'DB_HANDLE' }->prepare( "UPDATE $table SET $field = ? $where_cl" ) ;
     $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], "UPDATE $table SET $field = ? $where_cl" ) ;
     $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], [ $data->{ 'update' }->{ $field }, $params ] ) ;
-    my $res; 
+    my $res;
     eval {
         $res = $gth->execute( $data->{ 'update' }->{ $field }, @{ [ split( $PARAM_DELIMITER, $params ) ] } ) ;
     };
@@ -512,13 +512,21 @@ sub parameter_kezelo {
 
 sub execute_sql {
     my $self   = shift;
+    $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], \@_ ) ;
     my $sql    = shift || return;
-    my @params = shift;
+    my @params = @_;
 
     my $gth = $self->{ 'DB_HANDLE' }->prepare($sql) ;
-    return $gth->execute(@params) ;
-}
+    my $res;
+    eval {
+        $res = $gth->execute(@params) ;
+    };
 
+    if( $@ ) {
+        $self->add_error( 'DB_ERROR', $@ );
+    }
+    return $res;
+}
 
 sub empty_tables {
     my $self = shift ;
