@@ -126,7 +126,6 @@ function create_select_list(name, id, list, func, act_table) {
 
         i++;
     }
-
     sel.multiple = "multiple";
     return sel;
 }
