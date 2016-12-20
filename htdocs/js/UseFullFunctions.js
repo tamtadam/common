@@ -99,10 +99,14 @@ function getOS() {
     return os;
 }
 
-function create_select_list(name, id, list, func, prefix) {
-    var sel;
+function create_select_list(name, id, list, func, act_table) {
+    var sel,prefix,table_id,table_name;
     var i = 0;
-    var sortedlist = new Array();
+    var sortedlist = [];
+	
+	prefix     = act_table["prefix"];
+	table_id   = act_table["id"];
+	table_name = act_table["name"];
 
     sel = document.getElementById(id);
     if (sel == null) {
@@ -116,9 +120,9 @@ function create_select_list(name, id, list, func, prefix) {
     sel.onchange = func;
 
     for (var idx in list) {
-        sel.options[i] = new Option(list[idx]['Title'], list[idx]['Title']);
-        sel.options[i].value = list[idx]['FeatureID'];
-        sel.options[i].id = (prefix || "") + list[idx]['FeatureID'];
+        sel.options[i] = new Option(list[idx][table_name], list[idx][table_name]);
+        sel.options[i].value = list[idx][table_id];
+        sel.options[i].id = (prefix || "") + list[idx][table_id];
 
         i++;
     }
@@ -158,59 +162,4 @@ function create_h6(p_data) {
 }
 
 
-function progress_bar(title){
-	    var progressTimer,
-	      title,
-	      progressbar = $( "#progressbar" ),
-	      progressLabel = $( ".progress-label" ),
-	      dialogButtons = [{
-	        text: "Cancel Download",
-	        click: closeDownload
-	      }],
-	      dialog = $( "#dialog" ).dialog({
-	    	width   : 800,
-	        height  : 200,
-	        autoOpen: false,
-	        position: [800, 300],	    	
-	        autoOpen: false,
-	        closeOnEscape: false,
-	        resizable: false,
-	        buttons: dialogButtons,
-	        open: function() {
-	          progressTimer = setTimeout( progress, 10 );
-	        }
-	      });
-	    progressbar.progressbar({
-	      value: false,
-	      change: function() {
-	        progressLabel.text( "Current Progress: " + progressbar.progressbar( "value" ) + "%" );
-	      },
-	      complete: function() {
-	        progressLabel.text( "Complete!" );
-	        dialog.dialog( "option", "buttons", [{
-	          text: "Close",
-	          click: closeDownload
-	        }]);
-	        $(".ui-dialog button").last().trigger( "focus" );
-	      }
-	    });
-	
-	    dialog.dialog("open");
-	
-	    function progress() {
-	      progressbar.progressbar( "value", 50 );
-	    }
-	
-	    function closeDownload() {
-	      clearTimeout( progressTimer );
-	      dialog
-	        .dialog( "option", "buttons", dialogButtons )
-	        .dialog( "close" );
-	      progressbar.progressbar( "value", false );
-	      progressLabel
-	        .text( "Starting download..." );
-	    }
-	    dialog.dialog('option', 'title', title);
-	
-	    return 1;
-}
+
