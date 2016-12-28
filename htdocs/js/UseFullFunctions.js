@@ -160,5 +160,25 @@ function create_h6(p_data) {
     return p;
 }
 
+function create_li(li_data) {
+    var li = document.createElement("li");
+
+    if (li_data['value']) {
+        li.value = li_data['value'];
+    }
+
+    if (li_data['class']) {
+        li.class = li_data['class'];
+        li.setAttribute("class", li_data["class"]);
+    }
+    if (li_data['id']) {
+        li.id = li_data['id'];
+    }
+    if (li_data['function']) {
+        li.onclick = link_to_screenshot;
+    }
+
+    return li;
+}
 
 

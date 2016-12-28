@@ -480,4 +480,18 @@ sub AUTOLOAD {
     }
 }
 
+sub all_greater {
+    my @array = @_;
+    if( $#array >= 1 ) {
+        if( $array[ 1 ] >= $array[ 0 ] ) {
+            shift @array for 0..1;
+            return all_greater( @array );
+        } else {
+            return 0;    
+        }
+    } else {
+        return 1;    
+    }
+}
+
 1 ;
