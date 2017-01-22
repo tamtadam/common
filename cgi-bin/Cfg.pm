@@ -8,6 +8,8 @@ $VERSION = '1.00';
 
 use Data::Dumper;
 
+my $CFG;
+
 sub TIEHASH {
 
    my $class = shift;
@@ -100,7 +102,7 @@ sub TIEHASH {
       close FH;
       $node->{CNF} = \%cnf
    } else {
-       print "Can't open file: $file\n" and die;
+       print "Can't open file: $file\n";
    }
    my $this = bless $node, $class;
    return $this
@@ -257,4 +259,25 @@ sub get_struct_from_file{
 
     return \%rcfg ;
 }
+
+sub init {
+    my $cfg_file = shift || return;
+    $CFG = get_struct_from_file($cfg_file);
+    $CFG = $CFG->{DATABASE};
+}
+
+sub get_data {
+    my $data_key = shift || return;
+    return $CFG->{$data_key};
+}
+
+sub get_all_cfg {
+    return $CFG;
+}
+
+sub INIT {
+    init( $ENV{'SERVERCFG'} || 'server.cfg' );
+}
+
+1;
 

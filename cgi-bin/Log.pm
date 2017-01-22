@@ -35,7 +35,7 @@ sub start_time {
     my $params = $_[ 1 ] ;
     my $w_mode = ">>" ;
     my $file   = "$pkg" . "_" . "$fv.txt" ;
-    my $dir    = ( $self->{ 'LOG_DIR' } ? $self->{ 'LOG_DIR' } : './log/' ) ;
+    my $dir    = ( ref $self && $self->{ 'LOG_DIR' } ? $self->{ 'LOG_DIR' } : './log/' ) ;
     unless ( -e $dir ) {
         mkdir( $dir ) ;
     } ## end unless ( -e $dir )

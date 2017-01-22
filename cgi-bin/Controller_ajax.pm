@@ -69,12 +69,12 @@ sub start_action {
         #Saveform1- ben tombben erkezik az adat mentesre es a user data
         if ( 'ARRAY' eq ref $received_data->{ $_ } ) {
             $received_data->{ $_ }->[ 0 ]->{ 'uid' } = $uid ;
-        } else {
+        } elsif( 'HASH' eq ref $received_data->{ $_ } ) {
             $received_data->{ $_ }->{ 'uid' } = $uid ;
         } ## end else [ if ( 'ARRAY' eq ref $received_data...)]
 
         START ;
-        delete $received_data->{ $_ }->{ 'order' } ;
+        delete $received_data->{ $_ }->{ 'order' } if 'HASH' eq ref $received_data->{ $_ };
         $return_value->{ $_ } = $self->$_( $received_data->{ $_ } ) ;
         $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], $return_value ) ;
 
