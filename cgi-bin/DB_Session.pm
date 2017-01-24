@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use utf8;
 use Data::Dumper;
+use DBH;
 
 use FindBin;
 use lib $FindBin::RealBin;
@@ -16,7 +17,7 @@ use Log ;
 my $struct;
 my $data;
 
-our @ISA = qw( Log );
+our @ISA = qw( Log DBH );
 
 sub new {
     my ($class) = shift;
@@ -41,26 +42,14 @@ sub check_password{
     my $loginn = $data->{'acc'};
     my $passwdd= $data->{'pwd'};
     #$context->add($passwdd);
-    my $sth    = $self->{'DB'} -> prepare(" SELECT *
-                                        FROM partner
-                                        WHERE login_nev =? AND jelszo =?
-                                        " );
-
-    $sth->execute($loginn,$data->{'pwd'}) or return undef ;
-
-    return undef unless $sth ;
-
-    my $login = undef ;
-    while (my  $hash = $sth -> fetchrow_hashref() ) {
-        $login = $hash;
-    }
-    if( !defined $login or scalar keys %{$login} == 0 ){
-        return undef ;
-
-    }
-
-    return $login ;
-
+    my @return = $self->my_select({
+        from => 'partner',
+        where => {
+            username => $data->{'acc'},
+            password => $data->{'pwd'}
+        },
+    });
+    return @return ;
 }
 
 sub check_session {

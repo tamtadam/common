@@ -2,7 +2,6 @@ package Controller_ajax ;
 
 use strict ;
 use Data::Dumper ;
-use AccMan ;
 use Log ;
 use DB_Session ;
 use DBConnHandler qw( SESS_REQED NO_SESSION START STOP ) ;
@@ -30,7 +29,7 @@ sub new {
         print "Module is not found: " . $@ ;
       } ;
 
-    @ISA = ( "Log", "AccMan", $required_module ) ;
+    @ISA = ( "Log", $required_module ) ;
     $self->init( @_ ) ;
     $self ;
 } ## end sub new
