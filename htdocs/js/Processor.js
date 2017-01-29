@@ -18,11 +18,6 @@ function send_cmd( async_ ) {
 
 function processor(data_to_process) {
 	console.log( data_to_process ) ;
-	var ret_val = new Object();
-    for ( var cmd in data_to_process) {
-	  	ret_val[ cmd ] = data_to_process[ cmd ] ;
-	}
-
     if(  data_to_process != null && data_to_process[ 'errors' ] && data_to_process[ 'time' ] )
     {
 	   	error_messages_and_server_comm_times( {
@@ -32,12 +27,13 @@ function processor(data_to_process) {
     }
     if ( data_to_process != null && data_to_process != null && data_to_process[ 'time' ] ){
     	print_measure( data_to_process[ 'time' ] ) ;
-    	if ( FUNCTIONS && FUNCTIONS[ cmd ] ) {
-        	FUNCTIONS[ cmd ]( data_to_process[cmd] ) ;
+        for ( var cmd in data_to_process) {
+        	if ( FUNCTIONS && FUNCTIONS[ cmd ] ) {
+            	FUNCTIONS[ cmd ]( data_to_process[cmd] ) ;
+        	}
     	}
     }
-		
-    return ret_val ;
+    return data_to_process ;
 }
 
 

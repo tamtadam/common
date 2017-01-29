@@ -160,6 +160,13 @@ function create_h6(p_data) {
     return p;
 }
 
+function create_span(p_data) {
+    var p = document.createElement("span");
+    p.id = p_data["id"];
+    p.innerHTML = p_data['text'];
+    return p;
+}
+
 function create_li(li_data) {
     var li = document.createElement("li");
 
