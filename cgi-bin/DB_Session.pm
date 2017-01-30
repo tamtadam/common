@@ -42,23 +42,15 @@ sub check_password{
     my $loginn = $data->{'acc'};
     my $passwdd= $data->{'pwd'};
     #$context->add($passwdd);
-    my $login = $self->my_select({
+    my @login = $self->my_select({
         from => 'partner',
         where => {
-            username => $data->{'acc'},
-            password => $data->{'pwd'}
+            username  => $data->{'acc'},
+            password  => $data->{'pwd'},
+            activated => 1
         },
     });	
-    if ( defined $login ) {
-        if ( scalar @{ $login } > 1 ) {
-            return $login ;
-        } else {
-            return $login->[ 0 ] ;
-        } 
-    } else {
-        return undef ;	
-	}	
-	
+    return @login;
 }
 
 sub check_session {
