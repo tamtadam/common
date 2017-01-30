@@ -130,7 +130,7 @@ function create_select_list(name, id, list, func, act_table) {
     return sel;
 }
 
-function create_button_as_img(id, func, label, src) {
+function create_button_as_img(id, func, label, src, par) {
     var button = document.getElementById(id);
     if (button == null) {
         button = document.createElement('img');
@@ -141,7 +141,10 @@ function create_button_as_img(id, func, label, src) {
     if (button.src == "") {
         button.src = src;
     }
-    button.onclick = func;
+    button.addEventListener("click", function(){
+        func(par);
+    }, false);
+		
     return button;
 }
 
@@ -153,7 +156,7 @@ function create_input(input_id) {
 }
 
 function create_h6(p_data) {
-    var p = document.createElement("h6");
+    var p = document.createElement("h4");
     p.id = p_data["id"];
     p.setAttribute("class", p_data["class"]);
     p.innerHTML = p_data['text'];
