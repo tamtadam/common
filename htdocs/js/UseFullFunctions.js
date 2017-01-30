@@ -156,7 +156,7 @@ function create_input(input_id) {
 }
 
 function create_h6(p_data) {
-    var p = document.createElement("h4");
+    var p = document.createElement("h6");
     p.id = p_data["id"];
     p.setAttribute("class", p_data["class"]);
     p.innerHTML = p_data['text'];
