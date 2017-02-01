@@ -5,6 +5,7 @@ function push_cmd(key, value) {
 
 function send_cmd( async_ ) {
 	console.log( PROC_ARRAY );
+	push_cmd( "session_data", JSON.stringify( { "session" : session || GetCookie( 'session' ) } ) );
 
 	result = AJAX_req({
 			'url' : '/cgi-bin/' + CGI_PATH + '/' + CGI_SCRIPT,

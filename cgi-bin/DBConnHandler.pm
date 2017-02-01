@@ -102,7 +102,7 @@ sub SESS_REQED {
 } ## end sub SESS_REQED
 
 sub NO_SESSION {
-    return get_my_sql_config()->{ PREREQ }{ $_[ 0 ] }{ NO_SESSION };
+    return !get_my_sql_config()->{ $_[ 0 ] }{ SESSION };
 }
 
 sub SEL_CSET {

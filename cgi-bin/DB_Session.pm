@@ -93,7 +93,7 @@ sub save_session{
     $self->{'Session'} = new CGI::Session("driver:MySQL", undef,  {Handle=>$self->{'DB'} }) or print "error";
 	
     return undef unless defined $login->{'username'};
-    
+
     $self->{'Session'}->param('partner_id',$login->{'partner_id'});
     $self->{'Session'}->param('nick',$login->{'login_nev'});
     $self->{'Session'}->param('logged_in',1);
@@ -101,7 +101,7 @@ sub save_session{
     $self->{'Session'}->param('conn_time',"$year-$mon-$mday $hour:$min");
     $self->{'Session'}->expire('+5h');
     my $session_id = $self->{'Session'}->id();
- 
+
     return undef unless defined $session_id ;
     $login->{'session'} = $session_id ;
     $login->{'nick'} = $login->{'username'};
