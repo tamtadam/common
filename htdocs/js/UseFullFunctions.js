@@ -123,6 +123,7 @@ function create_select_list(name, id, list, func, act_table) {
         sel.options[i] = new Option(list[idx][table_name], list[idx][table_name]);
         sel.options[i].value = list[idx][table_id];
         sel.options[i].id = (prefix || "") + list[idx][table_id];
+        $(sel.options[i]).data('data', list[idx]);
 
         i++;
     }
