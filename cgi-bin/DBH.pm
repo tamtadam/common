@@ -212,7 +212,7 @@ sub my_select {
     $self->start_time( @{ [ caller( 0 ) ] }[ 3 ],
                        "SELECT $distinct_cl $fields FROM $table $join $where_cl $sort_closure $groupby $limit" ) ;
     my $gth = $self->{ DB_HANDLE }
-      ->prepare( "SELECT $distinct_cl $fields FROM $table $join $where_cl $sort_closure $groupby $limit" ) ;
+      ->prepare( "SELECT $distinct_cl $fields FROM $table $join $where_cl  $groupby $sort_closure $limit" ) ;
 
 #print OUT "\n";
 #print Dumper "command : SELECT $distinct_cl $fields FROM $table $join $where_cl $sort_closure $groupby $limit  " , [ split( $PARAM_DELIMITER, $params ) ];

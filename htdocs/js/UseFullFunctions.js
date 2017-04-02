@@ -160,19 +160,19 @@ function getOS() {
 
     return os;
 }
-
-function create_select_list(name, id, list, func, act_table, select_params) {
+//TODO name felesleges
+function create_select_list(id, list, func, select_params,option_params) {
     var sel,prefix,table_id,table_name;
     var i = 0;
     var sortedlist = [];
 	
-	prefix     = act_table["prefix"];
-	table_id   = act_table["id"];
-	table_name = act_table["name"];
+	//prefix     = act_table["prefix"];
+	//table_id   = act_table["id"];
+	//table_name = act_table["name"];
 
     sel = document.getElementById(id);
     if (sel == null) {
-        sel = document.createElement('select');
+        sel = document.createElement('ul');
         sel.id = id;
     } else {
         document.getElementById(id).innerHTML = "";
@@ -180,14 +180,22 @@ function create_select_list(name, id, list, func, act_table, select_params) {
 
     $.each(select_params, function(k,v){ sel[k] = v});
 
-    sel.onchange = func;
 
     for (var idx in list) {
-        sel.options[i] = new Option(list[idx][table_name], list[idx][table_name]);
-        sel.options[i].value = list[idx][table_id];
-        sel.options[i].id = (prefix || "") + list[idx][table_id];
-        $(sel.options[i]).data('data', list[idx]);
+    	var li = document.createElement('li');
+    	var a = document.createElement('a');
+    	a.href = "#";
+    	a.innerHTML = list[idx]["Title"]; 
+        $(li).data('data', list[idx]);
+        
+        if(list[idx].Cnt==0){
+        	$(li).prop('class', "disabled");
+        }
+        
+        li.appendChild(a);
+        li.onclick = func;
 
+        sel.appendChild(li);
         i++;
     }
     return sel;
@@ -209,6 +217,32 @@ function create_button_as_img(id, func, label, src, par) {
     }, false);
 		
     return button;
+}
+
+function create_button(btn_id,func,params,html_fwork) {
+    var button = document.getElementById(btn_id);
+    if (button == null) {
+        button = document.createElement('button');
+        if (btn_id) {
+            button.id = btn_id;
+        }
+    }
+	
+    $.each(params, function(k,v){ button[k] = v});
+    
+    if(html_fwork != null){
+        if(html_fwork==="jquery"){
+        	$("#" + btn_id).button();
+        } else if(html_fwork==="bootstrap"){
+        	
+        }    	
+    }
+    
+    button.addEventListener("click", function(){
+        func(params);
+    }, false);
+ 
+    return button;	
 }
 
 function create_input(input_id) {
