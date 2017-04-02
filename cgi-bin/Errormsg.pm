@@ -11,6 +11,7 @@ our $VERSION = '0.02';
 
 use constant {
     DB_SELECT               => 'DB_SELECT',
+    SESSIONREQ              => 'SESSIONREQ'
 };
 
 my $ERROR_CODES = {

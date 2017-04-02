@@ -102,7 +102,7 @@ sub TIEHASH {
       close FH;
       $node->{CNF} = \%cnf
    } else {
-       print "Can't open file: $file\n";
+       #print "Can't open file: $file\n";
    }
    my $this = bless $node, $class;
    return $this
@@ -252,7 +252,8 @@ sub get_struct_from_file{
     tie %cfg, 'Cfg' , READ => $_[0] ,
                       COMMENT => '#';
     unless ( %cfg ) {
-      print "Reading of $_[0] is F A I L E D\n" and return undef ;
+        #print "Reading of $_[0] is F A I L E D\n" and 
+      return undef ;
     }
     %rcfg = %cfg ;
     untie %cfg   ;

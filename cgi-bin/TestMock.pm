@@ -27,7 +27,7 @@ Readonly my $NO_WARNINGS              => 'No warning' ;
 Readonly my $ALL_INPUTS               => 'all_inputs' ;
 Readonly my $MAX_NUM_OF_FILE_OP_TRIAL => 10 ;
 
-my $BUFFERS = {
+our $BUFFERS = {
                 warn => {
                           IN   => undef,
                           OUT  => undef,
@@ -345,12 +345,12 @@ sub get_input_values {
 sub function_is_mocked {
     my $self     = shift ;
     my $function = shift ;
-    
+
     if ( !defined $function ||
          !defined $self->{ IO }{ $function } ) {
-        return 0;    
+        return 0;
     } else {
-        return 1;    
+        return 1;
     }
 }
 sub _get_input_value {
@@ -446,13 +446,15 @@ sub count_buffer {
 } ## end sub count_buffer
 
 sub get_result_of_fcgi {
+    print Dumper \@_;
     my $cgi_path = shift ;
     my $param    = shift ;
 
-    open( my $cgi, "-|", $cgi_path, $param ) or die "Can't open pipe to:" . $cgi_path ;
+    open( my $cgi, "-|", $cgi_path, $cgi_path ) or die "Can't open pipe to:" . $cgi_path ;
+    my @ress = system("$cgi_path $cgi_path");
     my @res = <$cgi> ;
     close $cgi ;
-
+    print Dumper @ress;
     my $res_s = pop @res ;
 
     return {
@@ -466,17 +468,17 @@ sub AUTOLOAD {
     my $self = shift;
 
     my ( $class, $function ) = ( $AUTOLOAD =~ /^(.*?)::(.*?)$/) ;
-    
+
     if ( !$self->function_is_mocked( $function ) ) {
         $self->mock( $function );
     }
-    
+
     if ( @_ ) {
         $self->add_return_value( $function, @_ );
-    
+
     } else {
         return ( wantarray ? $self->get_input_values( $function ):
-                             $self->get_input_value( $function ) );    
+                             $self->get_input_value( $function ) );
     }
 }
 
@@ -487,10 +489,10 @@ sub all_greater {
             shift @array for 0..1;
             return all_greater( @array );
         } else {
-            return 0;    
+            return 0;
         }
     } else {
-        return 1;    
+        return 1;
     }
 }
 

@@ -32,7 +32,9 @@ module.exports = {
 			pagePH.onNavigationRequested = function( url, type, willNavigate, main){
 				
 			}
-			
+			pagePH.onConsoleMessage = function(msg, lineNum, sourceId) {
+				//console.log('CONSOLE: ' + msg + ' (from line #' + lineNum + ' in "' + sourceId + '")');
+			};
 			pagePH.viewportSize = {
 				width: 1920,
 				height: 1280,

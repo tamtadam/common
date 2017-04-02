@@ -16,7 +16,6 @@ my $controller = Controller_ajax->new( {
                                         #'MODEL'     => "ontozo_model",
                                         'LOG_DIR'   => "./log/",
 } );
-
 my $struct;
 my $data;
 

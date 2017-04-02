@@ -43,11 +43,17 @@ function leftClick( selector ) {
 	})
 }
 
-function clikcItemInSelectList ( selector, item ) {
+function clickItemInSelectList ( selector, item ) {
 	executeAfter(selector, function(){
 		$(selector).filter( function(n, i){ return i.value.match( item)} ).prop('selected', true).trigger('change')
 		$(selector).filter( function(n, i){ return i.value.match( item)} ).prop('selected', true).trigger('click')		
-	
+		
+		$(selector).filter( function(n, i){ return !i.value.match( item)} ).prop('selected', false).trigger('change')
+		$(selector).filter( function(n, i){ return !i.value.match( item)} ).prop('selected', false).trigger('click')	
+		
+		$(selector).filter( function(n, i){ return i.innerHTML.match( item)} ).prop('selected', true).trigger('change')
+		$(selector).filter( function(n, i){ return i.innerHTML.match( item)} ).prop('selected', true).trigger('click')	
+		
 		$(selector).parent().trigger('change');
 		$(selector).parent().trigger('click');
 		return true;
@@ -167,6 +173,15 @@ function assertOptions(selector, options) {
 	executeAfter(selector, function(){
 		var control  = $(selector);
 		var options2 = control.map(function(){ return this.innerText }).get();
+		return options2.filter(function(option){ return options.indexOf(option) > -1}).length == options.length
+	})
+	return true;
+}
+
+function selectList(selector, options) {
+	executeAfter(selector, function(){
+		var control  = $(selector);
+		var options2 = control.map(function(){ return this.innerHTML }).get();
 		return options2.filter(function(option){ return options.indexOf(option) > -1}).length == options.length
 	})
 	return true;

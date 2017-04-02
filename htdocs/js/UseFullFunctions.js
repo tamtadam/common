@@ -4,6 +4,23 @@ var TIMES_MAX = 8            ;
 var ERRORS     = new Array()  ;
 var ERRORS_MAX = 4            ;
 
+function sortObj(arr){
+    var sortedKeys = new Array();
+    var sortedObj = {};
+
+    for (var i in arr){
+        sortedKeys.push(i);
+    }
+    sortedKeys.sort();
+
+    for (var i in sortedKeys){
+        sortedObj[sortedKeys[i]] = arr[sortedKeys[i]];
+    }
+
+    return sortedObj;
+
+}
+
 function error_messages_and_server_comm_times( datas )
 {
 	var p ;
@@ -58,6 +75,18 @@ function error_messages_and_server_comm_times( datas )
 	}
 }
 
+function getParameterByName(name)
+{
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regexS = "[\\?&]" + name + "=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(window.location.href);
+    if(results == null)
+    return "";
+    else
+    return decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 function print_measure( TIMES_ARRAY )
 {
     if( document.getElementById('mesure') == null ){
@@ -70,6 +99,39 @@ function print_measure( TIMES_ARRAY )
 	document.getElementById('mesure').innerHTML += key +" : "+TIMES_ARRAY[key]+" s<br>";
     }
 
+}
+
+function CreateLimitStruct( step ) {
+	var type_l = step[ 'type' ] ;
+
+	if ( step[ 'step' ] ) {
+		message_pager[ type_l ][ 'limit_min' ] += step[ 'step' ] ;
+		message_pager[ type_l ][ 'limit_min' ] < 0 ? message_pager[ type_l ][ 'limit_min' ] = 0 : 0;
+		step[ 'step' ] < 0 ? --message_pager[ type_l ][ 'page_num' ] : ++message_pager[ type_l ][ 'page_num' ];
+		if (message_pager[ type_l ][ 'page_num' ] < 1) {
+			message_pager[ type_l ][ 'page_num' ] = 1;
+		}
+		message_pager[ type_l ][ 'step' ] = step[ 'step' ];
+	}
+		
+	var sendXMLStrings = {
+		'limit_min'    : message_pager[ type_l ][ 'limit_min' ]  ,
+		'limit_offset' : message_pager[ type_l ][ 'limit_offset' ] ,
+	};
+	if( step[ 'json' ] == 1 ){
+	    return JSON.stringify(sendXMLStrings);	
+    } else {
+	    return sendXMLStrings;
+    }
+}
+
+function show_hour(){
+    var Digital=new Date();
+    var hours=Digital.getHours();
+    var minutes=Digital.getMinutes();
+    //var time_p = $("#time_pick");
+    //time_p.val( hours + ":" + minutes );
+    setTimeout("show_hour()",600000) ;
 }
 
 function round_it( num1,num2 ){
@@ -99,7 +161,7 @@ function getOS() {
     return os;
 }
 
-function create_select_list(name, id, list, func, act_table) {
+function create_select_list(name, id, list, func, act_table, select_params) {
     var sel,prefix,table_id,table_name;
     var i = 0;
     var sortedlist = [];
@@ -111,11 +173,12 @@ function create_select_list(name, id, list, func, act_table) {
     sel = document.getElementById(id);
     if (sel == null) {
         sel = document.createElement('select');
-        sel.name = name;
         sel.id = id;
     } else {
         document.getElementById(id).innerHTML = "";
     }
+
+    $.each(select_params, function(k,v){ sel[k] = v});
 
     sel.onchange = func;
 
@@ -127,7 +190,6 @@ function create_select_list(name, id, list, func, act_table) {
 
         i++;
     }
-    sel.multiple = "multiple";
     return sel;
 }
 

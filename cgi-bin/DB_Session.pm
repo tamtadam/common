@@ -38,7 +38,6 @@ sub init{
 sub check_password{
     my $self = shift ;
     my $data = shift ;
-
     my $loginn = $data->{'acc'};
     my $passwdd= $data->{'pwd'};
     #$context->add($passwdd);
@@ -47,9 +46,10 @@ sub check_password{
         where => {
             username  => $data->{'acc'},
             password  => $data->{'pwd'},
-            activated => 1
+            activated => 1,
         },
-    });	
+        relation => 'and'
+    });
     return @login;
 }
 
