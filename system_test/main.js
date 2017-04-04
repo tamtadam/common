@@ -45,17 +45,21 @@ function leftClick( selector ) {
 
 function clickItemInSelectList ( selector, item ) {
 	executeAfter(selector, function(){
-		$(selector).filter( function(n, i){ return i.value.match( item)} ).prop('selected', true).trigger('change')
-		$(selector).filter( function(n, i){ return i.value.match( item)} ).prop('selected', true).trigger('click')		
-		
-		$(selector).filter( function(n, i){ return !i.value.match( item)} ).prop('selected', false).trigger('change')
-		$(selector).filter( function(n, i){ return !i.value.match( item)} ).prop('selected', false).trigger('click')	
-		
-		$(selector).filter( function(n, i){ return i.innerHTML.match( item)} ).prop('selected', true).trigger('change')
-		$(selector).filter( function(n, i){ return i.innerHTML.match( item)} ).prop('selected', true).trigger('click')	
-		
-		$(selector).parent().trigger('change');
-		$(selector).parent().trigger('click');
+		if(0) {
+			$(selector).filter( function(n, i){ return i.value.match( item)} ).prop('selected', true).trigger('change')
+			$(selector).filter( function(n, i){ return i.value.match( item)} ).prop('selected', true).trigger('click')		
+			
+			$(selector).filter( function(n, i){ return !i.value.match( item)} ).prop('selected', false).trigger('change')
+			$(selector).filter( function(n, i){ return !i.value.match( item)} ).prop('selected', false).trigger('click')	
+			
+			$(selector).filter( function(n, i){ return i.innerHTML.match( item)} ).prop('selected', true).trigger('change')
+			$(selector).filter( function(n, i){ return i.innerHTML.match( item)} ).prop('selected', true).trigger('click')	
+			
+		} else {
+			$(selector).filter( function(n, i){ return $(i).html().match( item)} ).prop('selected', true).trigger('change')
+			$(selector).filter( function(n, i){ return $(i).html().match( item)} ).prop('selected', true).trigger('click')	
+		}
+
 		return true;
 	})
 	return true

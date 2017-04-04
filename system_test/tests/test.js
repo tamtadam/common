@@ -12,7 +12,7 @@ module.exports = {
 					.then(action.fill('#username', 'trenyika'))
 					.then(action.fill('#password', 'alma'))
 					.then(action.click('#login'))
-					.then(assert.assertDisplayed('#feature_list'))
+//					.then(assert.assertDisplayed('#feature_list'))
 					.then(action.scenarioEnd(''))
 			})
 			
@@ -27,10 +27,10 @@ module.exports = {
 			scenario('delete feature', function() {
 				return action.open(URL)
 					.then(action.render)
-					.then(action.clickItemInSelectList('#feature_list option', 'new feature'))
+					.then(action.clickItemInSelectList('#feature_list a', 'new feature'))
 					.then(action.click('#delete_item_from_feature_list_btn'))
 					.then(action.click('#delete_feature_dialog_btn'))
-					.then(assert.selectList('#feature_list option', ['egy', 'harom', 'jjjjjjj', 'ketto', 'proba']))
+					.then(assert.selectList('#feature_list a', ["asfasdfasdf", "egy", "egyujfeature", "harom", "jjjjjjj", "proba"]))
 					.then(action.scenarioEnd(''))
 			})
 			

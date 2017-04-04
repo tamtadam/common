@@ -180,24 +180,94 @@ function create_select_list(id, list, func, select_params,option_params) {
 
     $.each(select_params, function(k,v){ sel[k] = v});
 
-
     for (var idx in list) {
     	var li = document.createElement('li');
     	var a = document.createElement('a');
     	a.href = "#";
-    	a.innerHTML = list[idx]["Title"]; 
+    	a.innerHTML = list[idx]["Title"];
+    	
+    	
         $(li).data('data', list[idx]);
-        
+
+        $.each(option_params, function(k,v){ li[k] = v});
+
         if(list[idx].Cnt==0){
-        	$(li).prop('class', "disabled");
+        	$(li).addClass("disabled");
         }
-        
+
         li.appendChild(a);
         li.onclick = func;
 
         sel.appendChild(li);
         i++;
     }
+    return sel;
+}
+
+function create_select_list_native(name, id, list, func, act_table, select_params) {
+    var sel,prefix,table_id,table_name;
+    var i = 0;
+    var sortedlist = [];
+	
+	prefix     = act_table["prefix"];
+	table_id   = act_table["id"];
+	table_name = act_table["name"];
+
+    sel = document.getElementById(id);
+    if (sel == null) {
+        sel = document.createElement('select');
+        sel.id = id;
+    } else {
+        document.getElementById(id).innerHTML = "";
+    }
+
+    $.each(select_params, function(k,v){ sel[k] = v});
+
+    sel.onchange = func;
+
+    for (var idx in list) {
+        sel.options[i] = new Option(list[idx][table_name], list[idx][table_name]);
+        sel.options[i].value = list[idx][table_id];
+        sel.options[i].id = (prefix || "") + list[idx][table_id];
+        $(sel.options[i]).data('data', list[idx]);
+
+        i++;
+    }
+    return sel;
+}
+
+function create_list_group(id, list, func, select_params,option_params) {
+    var sel,prefix,table_id,table_name;
+    var i = 0;
+    var sortedlist = [];
+	
+    sel = document.getElementById(id);
+    if (sel == null) {
+        sel = document.createElement('ul');
+        sel.id = id;
+    } else {
+        document.getElementById(id).innerHTML = "";
+    }
+
+    $.each(select_params, function(k,v){ $(sel).prop(k, v)});
+
+    for (var idx in list) {
+    	var li = document.createElement('a');
+    	li.innerHTML = list[idx]["Title"];
+    	
+        $(li).data('data', list[idx]);
+
+        $.each(option_params, function(k,v){ $(li).prop(k, v)});
+
+        if(list[idx].Cnt==0){
+        	//$(li).addClass("disabled");
+        }
+        li.onclick = func;
+
+        sel.appendChild(li);
+        i++;
+    }
+    $(sel).sortable();
     return sel;
 }
 
@@ -212,10 +282,11 @@ function create_button_as_img(id, func, label, src, par) {
     if (button.src == "") {
         button.src = src;
     }
-    button.addEventListener("click", function(){
-        func(par);
-    }, false);
-		
+    button.onclick = func;
+//    button.addEventListener("click", function(){
+//        func(par);
+//    }, false);
+
     return button;
 }
 
@@ -229,7 +300,7 @@ function create_button(btn_id,func,params,html_fwork) {
     }
 	
     $.each(params, function(k,v){ button[k] = v});
-    
+
     if(html_fwork != null){
         if(html_fwork==="jquery"){
         	$("#" + btn_id).button();
@@ -237,11 +308,11 @@ function create_button(btn_id,func,params,html_fwork) {
         	
         }    	
     }
-    
-    button.addEventListener("click", function(){
-        func(params);
-    }, false);
- 
+    button.onclick = func;
+//    button.addEventListener("click", function(){
+//        func(params);
+//    }, false);
+
     return button;	
 }
 
