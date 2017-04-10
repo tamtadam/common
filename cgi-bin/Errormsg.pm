@@ -11,12 +11,18 @@ our $VERSION = '0.02';
 
 use constant {
     DB_SELECT               => 'DB_SELECT',
-    SESSIONREQ              => 'SESSIONREQ'
+    SESSIONREQ              => 'SESSIONREQ',
+    FEATURE_NOT_ADDED       => 'FEATURE_NOT_ADDED',
+    PARAM_MISSING           => 'PARAM_MISSING',
+    PROJECT_EXIST           => 'PROJECT_EXIST',
 };
 
 my $ERROR_CODES = {
     "DB_SELECT"                => "Selection from db. does not response",
     "SESSIONREQ"               => "You are not logged in",
+    "FEATURE_NOT_ADDED"        => "It's not possible to add this feature",
+    "PARAM_MISSING"            => "Parameter is missing",
+    "PROJECT_EXIST"            => "This project name is already exist"
 } ;
 
 sub new {

@@ -260,7 +260,7 @@ function create_list_group(id, list, func, select_params,option_params) {
         $.each(option_params, function(k,v){ $(li).prop(k, v)});
 
         if(list[idx].Cnt==0){
-        	//$(li).addClass("disabled");
+        	$(li).addClass("disabled");
         }
         li.onclick = func;
 
