@@ -1,6 +1,6 @@
-function push_cmd(key, value) {
+function push_cmd(key, value,succes_func,error_func) {
 	PROC_ARRAY[key] = value;
-
+	FUNC_ARRAY[key] = {'success':succes_func, 'error':error_func};
 }
 
 function send_cmd( async_ ) {
@@ -17,7 +17,7 @@ function send_cmd( async_ ) {
 	return result;
 }
 
-function processor(data_to_process) {
+function processor(data_to_process,succes_callback) {
 	console.log( data_to_process ) ;
     if(  data_to_process != null && data_to_process[ 'errors' ] && data_to_process[ 'time' ] )
     {
@@ -29,7 +29,11 @@ function processor(data_to_process) {
     if ( data_to_process != null && data_to_process != null && data_to_process[ 'time' ] ){
     	print_measure( data_to_process[ 'time' ] ) ;
         for ( var cmd in data_to_process) {
-        	if ( FUNCTIONS && FUNCTIONS[ cmd ] ) {
+        	if(data_to_process[cmd] && FUNC_ARRAY[cmd] != null && FUNC_ARRAY[cmd].success != null) {
+        		FUNC_ARRAY[cmd].success(data_to_process[cmd]);
+        	} else if(!data_to_process[cmd] && FUNC_ARRAY[cmd].error != null) {
+        		FUNC_ARRAY[cmd].error(data_to_process[cmd]);
+        	} else if ( FUNCTIONS && FUNCTIONS[ cmd ] ) {
             	FUNCTIONS[ cmd ]( data_to_process[cmd] ) ;
         	}
     	}

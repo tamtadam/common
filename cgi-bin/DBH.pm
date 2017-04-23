@@ -131,6 +131,11 @@ sub my_update {
     if ( $@ ) {
         $self->add_error( 'DB_ERROR', $@ );
         return;
+    } else {
+    	return $self->my_select({
+    		where => $data->{ 'where' },
+    		from  => $data->{ 'table' },
+    	});
     } ## end if ( $@ )
 
 } ## end sub my_update

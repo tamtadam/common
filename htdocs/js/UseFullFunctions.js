@@ -73,21 +73,24 @@ function error_messages_and_server_comm_times( datas )
 			
 	    }
 		
-        $('#error').dialog({
-	        width: 500,
-	        title: 'Feature is locked or not selected!',
-	        height: 150,
-	        position: [600, 600],
-	        buttons:
-	        {
-	            "Close": {
-	            	text: 'Close',
-	                click: function() {
-	                    $(this).dialog("close");
-	                }
-	            }
-	        }
-	    });
+		if(ERRORS.length > 0) {
+	        $('#error').dialog({
+		        width: 500,
+		        title: 'List of errors!',
+		        height: 150,
+		        position: [600, 600],
+		        buttons:
+		        {
+		            "Close": {
+		            	text: 'Close',
+		                click: function() {
+		                    $(this).dialog("close");
+		                }
+		            }
+		        }
+		    });			
+		}
+
 	}
 }
 
@@ -337,6 +340,12 @@ function create_input(input_id) {
     input.id  = input_id;
 
     return input;
+}
+
+function create_a(a_params) {
+    var a = document.createElement('a');
+    $.each(a_params, function(k,v){ $(a).prop(k, v) });
+    return a;
 }
 
 function create_h6(p_data) {
