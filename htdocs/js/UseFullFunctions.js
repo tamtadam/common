@@ -72,6 +72,22 @@ function error_messages_and_server_comm_times( datas )
 			$( "#" + 'error_' + i ).css( "color", "red" );
 			
 	    }
+		
+        $('#error').dialog({
+	        width: 500,
+	        title: 'Feature is locked or not selected!',
+	        height: 150,
+	        position: [600, 600],
+	        buttons:
+	        {
+	            "Close": {
+	            	text: 'Close',
+	                click: function() {
+	                    $(this).dialog("close");
+	                }
+	            }
+	        }
+	    });
 	}
 }
 
