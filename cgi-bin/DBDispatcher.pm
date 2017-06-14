@@ -103,7 +103,15 @@ sub dispatcher {
         NOW => {
             my_sql => sub { return "NOW()";},
             sqlite => sub { return "datetime('now',  'localtime')"; },
-        }
+        },
+        CURDATE => {
+            my_sql => sub { return "CURDATE()";},
+            sqlite => sub { return "datetime('now',  'localtime')"; },
+        },
+        DATE_ADD => {
+            my_sql => sub { return 'DATE_ADD(' . $_[ 0 ] . ', INTERVAL ' . $_[ 1 ]. ' DAY)' } ,
+            sqlite => sub { return '' },
+        },
     } ;
 
     return $disp->{ $func }{ $driver }( @params );

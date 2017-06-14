@@ -72,8 +72,7 @@ function error_messages_and_server_comm_times( datas )
 			$( "#" + 'error_' + i ).css( "color", "red" );
 			
 	    }
-		
-		if(ERRORS.length > 0) {
+		if(ERRORS.length >) {
 	        $('#error').dialog({
 		        width: 500,
 		        title: 'List of errors!',

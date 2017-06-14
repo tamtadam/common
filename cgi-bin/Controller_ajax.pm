@@ -6,7 +6,7 @@ use Log ;
 use DB_Session ;
 use DBConnHandler qw( SESS_REQED NO_SESSION START STOP ) ;
 
-our @ISA ;
+our @ISA = qw( Log );
 
 sub new {
     my $instance = shift ;

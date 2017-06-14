@@ -3,6 +3,8 @@ use strict ;
 use warnings ;
 use Data::Dumper ;
 use File::stat ;
+use English qw' -no_match_vars ';
+
 our $LOG_ENABLED = 1 ;
 our $LOG_TO_STDOUT = 0 ;
 our $VERSION     = '0.02' ;
@@ -16,11 +18,28 @@ sub new {
     return $self ;
 } ## end sub new
 
+my $output;
+my $outputFH;
+my $oldFH;
+
 sub init {
     my $self = shift ;
-    $self->{ 'LOG_DIR' } = $_[ 0 ]->{ "LOG_DIR" } ;
+    my $params = shift || {};
+    $self->{ 'LOG_DIR' } = $params->{ "LOG_DIR" } ;
+
+    if ( $params->{ STDOUTREDIR } ) {
+        open($outputFH, '>>', $self->get_stdout_log_path() ) or die; # This shouldn't fail
+        $| = 1;
+        $oldFH = select $outputFH;
+    }
     $self ;
 } ## end sub init
+
+sub get_stdout_log_path {
+    my $self = shift;
+    return  ( $OSNAME =~/win/i ? $self->{ "LOG_DIR" } . "//stdout.log" : '/tmp/stdout.log');
+}
+
 
 sub start_time {
     my $self = shift ;
