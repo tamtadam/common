@@ -4,9 +4,9 @@ function push_cmd(key, value,succes_func,error_func) {
 }
 
 function send_cmd( async_ ) {
+	msg();
 	console.log( PROC_ARRAY );
 	push_cmd( "session_data", JSON.stringify( { "session" : session || GetCookie( 'session' ) } ) );
-
 	result = AJAX_req({
 			'url' : '/cgi-bin/' + CGI_PATH + '/' + CGI_SCRIPT,
 			'data' : PROC_ARRAY
@@ -38,6 +38,7 @@ function processor(data_to_process,succes_callback) {
         	}
     	}
     }
+
     return data_to_process ;
 }
 

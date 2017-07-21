@@ -40,6 +40,17 @@ sub get_stdout_log_path {
     return  ( $OSNAME =~/win/i ? $self->{ "LOG_DIR" } . "//stdout.log" : '/tmp/stdout.log');
 }
 
+sub log_info {
+    my @params = @_;
+    print what_time_is_it() . "   :   " . join("", @params) if $ENV{ ENABLE_STDOUT };
+}
+
+sub what_time_is_it {
+    my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime ;
+    $year += 1900 ;
+    $mon  += 1 ;
+    return "$year-$mon-$mday $hour:$min:$sec" ;
+} ## end sub time_to_db
 
 sub start_time {
     my $self = shift ;

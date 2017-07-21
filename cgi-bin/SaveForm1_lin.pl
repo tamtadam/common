@@ -8,6 +8,8 @@ use View_ajax;
 use Controller_ajax;
 use Data::Dumper ;
 
+$ENV{ ENABLE_STDOUT } = 0;
+
 my $db = &DBConnHandler::init( "server.cfg" );
 
 my $ajax       = View_ajax->new()      ;

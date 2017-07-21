@@ -4,6 +4,21 @@ var TIMES_MAX = 8            ;
 var ERRORS     = new Array()  ;
 var ERRORS_MAX = 4            ;
 
+function msg ( content ) {
+	if( typeof( dialog ) != 'undefined' ) {
+		$('#message_box p').html( content ? content : 'Töltés....');
+		dialog.dialog( "open" );
+	}
+}
+
+
+function add_extra_accordion (target, title, content) {
+    var newDiv = "<div><h3>" + title + "</h3><div>" + $(content).html() + "</div></div>";
+    target.append(newDiv)
+    target.accordion("refresh");
+}
+
+
 function sortObj(arr){
     var sortedKeys = new Array();
     var sortedObj = {};
@@ -72,7 +87,7 @@ function error_messages_and_server_comm_times( datas )
 			$( "#" + 'error_' + i ).css( "color", "red" );
 			
 	    }
-		if(ERRORS.length >) {
+		if(ERRORS.length > 0 ) {
 	        $('#error').dialog({
 		        width: 500,
 		        title: 'List of errors!',
@@ -382,5 +397,6 @@ function create_li(li_data) {
 
     return li;
 }
+
 
 

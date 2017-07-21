@@ -8,6 +8,7 @@ function AJAX_req( data, async_ ){
             key = i;
         }
     }
+
     $.ajax({
             url: data['url'] ,
             type: 'POST',
@@ -16,12 +17,16 @@ function AJAX_req( data, async_ ){
             dataType: 'json',
             async: async_ ,
             success: function( dataa ){
-                            return_dataa = dataa ;
-                            if ( async_ )
-                            {
-                            	processor( dataa ) ;
-                            }
-                        },
+	            return_dataa = dataa ;
+	            if ( async_ )
+	            {
+	            	processor( dataa ) ;
+	            }
+	        	if( typeof( dialog ) != 'undefined' ) {
+	        		setTimeout(function(){ dialog.dialog( "close" ) ;}, 500);
+	        	}
+            },
+
             error: function(XMLHttpRequest, textStatus, errorThrown) {
             	//alert("XMLHttpRequest="+XMLHttpRequest.responseText+"\ntextStatus="+textStatus+"\nerrorThrown="+errorThrown);
         }
