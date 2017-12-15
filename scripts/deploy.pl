@@ -12,8 +12,8 @@ use utf8;
 my $win2lin = Cfg::get_struct_from_file( $ENV{GIT_ROOT} . '\cfg\win2lin.cfg' ) ;
 
 my $project_name = uc( $ARGV[ 0 ] || 'ontozo' ) ;
-my $version = $ARGV[ 1 ] || 'v2_0_2' ;
-my @components = $ARGV[ 2 ] // qw(cgi-bin htdocs docs sql tools) ;
+my $version = Cfg::get_last_version();
+my @components = $ARGV[ 1 ] // qw(cgi-bin htdocs docs sql tools) ;
 
 my ( $src, $target_dir, $host, $cmd ) ;
 
@@ -46,6 +46,11 @@ foreach my $component ( @components ) {
 
 } ## end foreach my $component ( @components)
 execute_command( 'chmod 755 /var/www/cgi-bin/SaveForm1_lin.pl' );
+execute_command( 'chmod 755 /var/www/cgi-bin/controller.pl' );
+execute_command( 'chmod 755 /var/www/cgi-bin/controller.sh' );
+execute_command( 'chmod 777 /var/www/cgi-bin/log' );
+execute_command( 'touch /var/www/html/error.log' );
+execute_command( 'chmod 777 /var/www/html/error.log' );
 
 sub create_dir_structure {
     my $target = shift ;
@@ -71,7 +76,7 @@ sub execute_command {
     $cmd = get_ssh_access() . " " . $cmd ;
     print $cmd . "\n" ;
     print `$cmd` ;  
-}
+} ## end sub execute_command
 
 sub get_ssh_access {
     state $cmd =

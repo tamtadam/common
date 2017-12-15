@@ -1,8 +1,9 @@
 package Cfg;
 
 use strict;
-
 use vars qw( $VERSION %cnf );
+
+use YAML::XS 'LoadFile';
 
 $VERSION = '1.00';
 
@@ -249,17 +250,24 @@ sub get_struct_from_file{
     my  %cfg = ();
     my %rcfg;
 
-    tie %cfg, 'Cfg' , READ => $_[0] ,
-                      COMMENT => '#';
-    unless ( %cfg ) {
-        #print "Reading of $_[0] is F A I L E D\n" and 
-      return undef ;
+    if( $_[ 0 ] =~/yaml$/ ) {
+        return LoadFile( $_[ 0 ] );
+        
+    } else {
+        tie %cfg, 'Cfg' , READ => $_[0] ,
+                          COMMENT => '#';
+        unless ( %cfg ) {
+            #print "Reading of $_[0] is F A I L E D\n" and
+          return undef ;
+        }
+        %rcfg = %cfg ;
+        untie %cfg   ;
+    
+        return \%rcfg ;
     }
-    %rcfg = %cfg ;
-    untie %cfg   ;
 
-    return \%rcfg ;
 }
+
 
 sub init {
     my $cfg_file = shift || return;
@@ -278,6 +286,53 @@ sub get_all_cfg {
 
 sub INIT {
     init( $ENV{'SERVERCFG'} || 'server.cfg' );
+}
+
+sub get_first_free_version {
+    my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime ;
+    $year += 1900 ;
+    $mon  += 1 ;
+    my $cnt = 0;
+    my $version = "$year.$mon.$mday" ;
+    my $last_version = get_last_version_from_file();
+    
+    if( $last_version =~/$version/ ) {
+        $last_version =~/-(\d+)$/;
+        $last_version = $1 // -1;
+        $last_version++;
+    } else {
+        $last_version = 1;
+    }
+
+    $version .= '-' . $last_version;
+
+    open( my $fh, '>version.log');
+    print $fh $version;
+    close $fh;
+
+    return $version;
+} ## end sub time_to_db
+
+sub get_last_version {
+    my $version = '';
+    if ( ($version = get_last_version_from_file() ) ) {
+        open( my $fh, 'version.log');
+        $version = <$fh>;
+        close $fh;
+    } else {
+        $version = get_first_free_version();
+    }
+    return $version;
+}
+
+sub get_last_version_from_file {
+    my $version;
+    if ( -e 'version.log' ) {
+        open( my $fh, 'version.log');
+        $version = <$fh>;
+        close $fh;
+    }
+    return $version;
 }
 
 1;

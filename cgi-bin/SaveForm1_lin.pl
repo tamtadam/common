@@ -7,16 +7,19 @@ use CGI;
 use View_ajax;
 use Controller_ajax;
 use Data::Dumper ;
+use English qw' -no_match_vars ';
 
-$ENV{ ENABLE_STDOUT } = 0;
+$ENV{ STDOUT_REDIRECT } = 0;
+Log::init_log_path( $OSNAME =~/win/i ? "f:\\xampp\\cgi-bin\\log\\" : "/var/www/cgi-bin/log/" );
 
-my $db = &DBConnHandler::init( "server.cfg" );
+my $cfg = ( $OSNAME =~/win/i ? '' : '/var/www/cgi-bin/' ) . 'server.cfg' ;
+
+my $db = &DBConnHandler::init( $cfg );
 
 my $ajax       = View_ajax->new()      ;
 my $controller = Controller_ajax->new( {
                                         'DB_HANDLE' => $db ,
                                         #'MODEL'     => "ontozo_model",
-                                        'LOG_DIR'   => "./log/",
 } );
 
 my $struct;

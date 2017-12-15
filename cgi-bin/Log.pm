@@ -6,28 +6,20 @@ use File::stat ;
 use English qw' -no_match_vars ';
 
 our $LOG_ENABLED = 1 ;
-our $LOG_TO_STDOUT = 0 ;
 our $VERSION     = '0.02' ;
 
-sub new {
-    my ( $class ) = shift ;
-
-    my $self = {} ;
-    bless( $self, $class ) ;
-    $self->init( @_ ) ;
-    return $self ;
-} ## end sub new
-
+my $LOG_DIR;
 my $output;
 my $outputFH;
 my $oldFH;
 
+sub init_log_path {
+    $LOG_DIR = shift;
+}
+
 sub init {
     my $self = shift ;
-    my $params = shift || {};
-    $self->{ 'LOG_DIR' } = $params->{ "LOG_DIR" } ;
-
-    if ( $params->{ STDOUTREDIR } ) {
+    if ( $ENV{ STDOUT_REDIRECT } ) {
         open($outputFH, '>>', $self->get_stdout_log_path() ) or die; # This shouldn't fail
         $| = 1;
         $oldFH = select $outputFH;
@@ -37,7 +29,7 @@ sub init {
 
 sub get_stdout_log_path {
     my $self = shift;
-    return  ( $OSNAME =~/win/i ? $self->{ "LOG_DIR" } . "//stdout.log" : '/tmp/stdout.log');
+    return  $OSNAME =~/win/i ? $LOG_DIR . "\\stdout.log" : $LOG_DIR . '/stdout.log';
 }
 
 sub log_info {
@@ -65,7 +57,7 @@ sub start_time {
     my $params = $_[ 1 ] ;
     my $w_mode = ">>" ;
     my $file   = "$pkg" . "_" . "$fv.txt" ;
-    my $dir    = ( ref $self && $self->{ 'LOG_DIR' } ? $self->{ 'LOG_DIR' } : './log/' ) ;
+    my $dir    = ( ref $self && $LOG_DIR ? $LOG_DIR : './log/' ) ;
     unless ( -e $dir ) {
         mkdir( $dir ) ;
     } ## end unless ( -e $dir )

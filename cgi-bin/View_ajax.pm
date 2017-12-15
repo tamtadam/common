@@ -20,13 +20,12 @@ sub new {
     my $self     = {} ;
 
     bless $self, $class ;
-    $self->init ;
-    $self ;
+    return $self->init( @_ ) ;
 } ## end sub new
 
 sub init {
     my $self = shift ;
-    eval '$self->' . "$_" . '::init' for @ISA ;
+    eval '$self->' . "$_" . '::init(@_)' for @ISA ;
     $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], \@_ ) if $log ;
 
     $self ;

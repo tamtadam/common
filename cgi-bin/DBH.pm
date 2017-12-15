@@ -11,10 +11,10 @@ use FindBin ;
 use lib $FindBin::RealBin;
 use lib $FindBin::RealBin . "/cgi-bin/" ;
 
-use DBI ;
 use Log ;
 use Errormsg ;
-our @ISA = qw( Log Errormsg ) ;
+use params ;
+our @ISA = qw( Log Errormsg params ) ;
 use DBConnHandler qw( $DB ) ;
 our $VERSION = '1.00' ;
 
@@ -38,10 +38,16 @@ sub init {
     eval '$self->' . "$_" . '::init( @_ )' for @ISA ;
 
     $self->{ 'DB_HANDLE' } = $_[ 0 ]->{ 'DB_HANDLE' } ;
+    $self->{ 'db_params_by_id' } = $self->init_params();
     $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], \@_ ) ;
-
     $self ;
 } ## end sub init
+
+sub db_params {
+    my $self = shift;
+
+    return $self->{ 'db_params_by_id' };
+}
 
 sub time_to_db {
     my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime ;
@@ -287,6 +293,16 @@ sub my_select_insert {
     } ## end if ( !$data_id )
     return $data_id ;
 } ## end sub my_select_insert
+
+sub handle_my_param {
+    my $self  = shift ;
+    my $param = shift || {} ;
+
+    my $result = $self->my_select_insert(
+        table  => $param->{ 'table' },
+        select => $param->{ 'select' }
+    );
+}
 
 sub my_delete {
     my $self = shift ;

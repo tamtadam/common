@@ -30,8 +30,7 @@ sub new {
       } ;
 
     @ISA = ( "Log", $required_module ) ;
-    $self->init( @_ ) ;
-    $self ;
+    return $self->init( @_ ) ;
 } ## end sub new
 
 sub init {
