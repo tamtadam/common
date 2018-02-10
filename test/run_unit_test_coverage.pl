@@ -1,39 +1,51 @@
 use strict;
 use warnings;
 
-use Data::Dumper; # core
-use File::Spec::Functions qw(abs2rel rel2abs);  # core
-use File::Basename qw(fileparse); # core
-use FindBin;      # core
-use TAP::Harness;            # core
-use TAP::Parser::Aggregator; # core
-use TAP::Formatter::Console; # core
-use Term::ANSIColor;         # core
+use Data::Dumper; 
+use File::Spec::Functions qw(abs2rel rel2abs);  
+use File::Basename qw(fileparse); 
+use FindBin;      
+use TAP::Harness;            
+use TAP::Parser::Aggregator; 
+use TAP::Formatter::Console; 
+use Term::ANSIColor;         
+use Getopt::Long;
 
-use lib "$FindBin::RealBin/../lib/perl5";
-use lib "$FindBin::RealBin/ut";
+use lib "$FindBin::RealBin/../cgi-bin/";
+use lib 'f:\\GIT\\gherkin_editor\\cgi-bin\\';
 
 use JSON qw(encode_json decode_json);
+use Win32::Console;
 
 use Readonly;
 use Test::Harness qw(execute_tests);
 
-my @tests = map{'ut/'.$_} grep {!/^-/}  qw(
-UserHandling.t
-UpdateTimeStamps.t
-ScenarioTest.t
-FeatureTest.t
-);
+my $CONSOLE = Win32::Console->new(STD_OUTPUT_HANDLE);
+my $attr = $CONSOLE->Attr();
+
+my $path = "..";
+my $type = "unit";
+my $result_path = ".";
+
+GetOptions (
+            "path=s"  => \$path,
+            "type=s"  => \$type,
+            "results" => \$result_path,
+) or die("Missing argument");
+
+
+
+my @tests = grep { $_ =~/./ } glob( $path . '\*.t' );
 
 $ENV{HARNESS_OPTIONS}       = 'j4:c';
 $ENV{HARNESS_TIMER}         = 1;
-$ENV{HARNESS_PERL_SWITCHES} = '-MMSDW::Version=Devel-Cover,1.15';
-$ENV{HARNESS_PERL_SWITCHES} .=' -MDevel::Cover=-db,cover_db,-ignore,.*,-select,' . 'Model_ajax.pm,';
-$ENV{PERL5OPT} = '-MMSDW::Version=Devel-Cover,1.15';
+$ENV{HARNESS_PERL_SWITCHES} = '';
+#$ENV{HARNESS_PERL_SWITCHES} .=' -MDevel::Cover=-db,cover_db,-ignore,.*,-select,' . 'Model_ajax.pm,';
+$ENV{HARNESS_PERL_SWITCHES} .=' -MDevel::Cover=-db,cover_db,-ignore,\.t';
 
 print $ENV{HARNESS_PERL_SWITCHES} . "\n";
 
-open my $tap_file, '>', 'unit_test_results.tap' or die "File open error:" . $! ;
+open my $tap_file, '>', $type . '_test_results.tap' or die "File open error:" . $! ;
 
 my ($total, $failed) = execute_tests(tests => \@tests, out => $tap_file);
 
@@ -45,7 +57,6 @@ my $git_version;
 
 if ( $ENV{ SAVETESTRESULTS } ) {
     $tck = undef ;# TestCaseKPI->new();
-    #$root_path = "http://myweb-eu.ms.com/~trenyik/test_cover2/-var-tmp-$WHOAMI-mis2-trunk-lib-perl5-";
     $git_version = $tck->get_version_only();
 }
 my @passed = subtract(\@tests, [ keys %{$failed} ]);
@@ -77,11 +88,21 @@ sub print_testcases {
     my $tc_name = '';
     my $tc_path = '';
     for my $act_test(@{$conf->{tc_list}}) {
-        $act_test=~/\/(.*)$/;
-        $tc_name = $1;
-        $tc_path = $tc_name;
-        $tc_path =~s/(\.pl)/-pm/;
-        print colored($tc_name . " is " . $conf->{status}. "\n", $conf->{color});
+        $tc_name = $act_test;
+        $tc_path = $act_test;
+        $tc_path =~s/(\.t)/-pm/;
+
+        if( $conf->{color} =~/green/) {
+            $CONSOLE->Attr($FG_GREEN);
+        } else {
+            $CONSOLE->Attr($FG_RED);
+        }
+
+        print $tc_name . " is " . $conf->{status}. "\n";
+
+        $CONSOLE->Attr($attr);
+
+
         if ( $tck ) {
             $tck->add_test({
                 ResultID       => $conf->{status} =~/passed/ ? $tck->passed() : $tck->failed(),

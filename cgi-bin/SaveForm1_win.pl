@@ -11,7 +11,7 @@ use English qw' -no_match_vars ';
 
 Log::init_log_path( $OSNAME =~/win/i ? "f:\\xampp\\cgi-bin\\log\\" : "/var/www/cgi-bin/log/" );
 
-$ENV{ STDOUT_REDIRECT } = 1;
+$ENV{ STDOUT_REDIRECT } = 0;
 
 my $db = &DBConnHandler::init( "server.cfg" );
 

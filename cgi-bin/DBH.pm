@@ -38,7 +38,7 @@ sub init {
     eval '$self->' . "$_" . '::init( @_ )' for @ISA ;
 
     $self->{ 'DB_HANDLE' } = $_[ 0 ]->{ 'DB_HANDLE' } ;
-    $self->{ 'db_params_by_id' } = $self->init_params();
+    $self->{ 'db_params_by_id' } = $self->init_params() unless $_[ 0 ]->{ 'noparams' } ;
     $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], \@_ ) ;
     $self ;
 } ## end sub init
