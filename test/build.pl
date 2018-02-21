@@ -35,7 +35,7 @@ my $cgi_bin = $main_dir . '/cgi-bin/';
 
 
 if ( exists $yaml->{ $type } ) {
-    run_build_config( $yaml->{ $type }, $type );
+    run_build_config( $yaml->{ $type }, $type, $dirname );
 
 } else {
     print "TYPE is not defined in the given build config\n";
@@ -43,9 +43,11 @@ if ( exists $yaml->{ $type } ) {
 }
 
 sub run_build_config {
-    my $build_config = shift || {};
-    my $type         = shift;
-
+    my $build_config = shift || {}     ;
+    my $type         = shift || 'unit' ;
+    my $dirname      = shift || ''     ;
+    $build_config->{ root } = $build_config;
+    
     state $type_list = {
         'unit'   => \&run_unit_tests,
         'comp'   => sub{},
@@ -73,7 +75,7 @@ sub run_unit_tests {
     $ENV{HARNESS_PERL_SWITCHES} = '';
     $ENV{HARNESS_PERL_SWITCHES} .=' -MDevel::Cover=-db,cover_db,-ignore,\.t';
 
-    my @tests = grep { $_ =~/./ } glob( $build_config->{ tc_folder } . ( $build_config->{ selector } || '\*.t' ) );
+    my @tests = grep { $_ =~/./ } glob( $build_config->{ root } . $build_config->{ tc_folder } . ( $build_config->{ selector } || '\*.t' ) );
 
     print $ENV{HARNESS_PERL_SWITCHES} . "\n";
     open my $tap_file, '>', $type . '_test_results.tap' or die "File open error:" . $! ;
