@@ -14,6 +14,7 @@ use Getopt::Long;
 use YAML;
 use Readonly;
 use Test::Harness qw(execute_tests);
+use File::Slurp;
 
 use feature qw(state);
 
@@ -28,14 +29,14 @@ GetOptions (
 ) or die("Missing argument");
 
 
-my $yaml = YAML::LoadFile( 'f:\GIT\gherkin_editor\test\build.yaml' );
-my $dirname  = dirname( 'f:\GIT\gherkin_editor\test\build.yaml' );
-my $main_dir = dirname( dirname( 'f:\GIT\gherkin_editor\test\build.yaml' ) );
+my $yaml = YAML::LoadFile( 'f:\GIT\gherkin_editor\build.yaml' );
+my $dirname  = dirname( 'f:\GIT\gherkin_editor\build.yaml' );
+my $main_dir = dirname( dirname( 'f:\GIT\gherkin_editor\build.yaml' ) );
 my $cgi_bin = $main_dir . '/cgi-bin/';
 
 
 if ( exists $yaml->{ $type } ) {
-    run_build_config( $yaml->{ $type }, $type, $dirname );
+    print Dumper run_build_config( $yaml->{ $type }, $type, $dirname );
 
 } else {
     print "TYPE is not defined in the given build config\n";
@@ -46,12 +47,19 @@ sub run_build_config {
     my $build_config = shift || {}     ;
     my $type         = shift || 'unit' ;
     my $dirname      = shift || ''     ;
-    $build_config->{ root } = $build_config;
+    $build_config->{ root } = $dirname;
     
     state $type_list = {
-        'unit'   => \&run_unit_tests,
-        'comp'   => sub{},
-        'system' => sub{}
+        'unit'   => sub {
+            set_env( @_ );
+            return run_unit_tests( @_ );
+        },
+        'comp'   => sub{
+            
+        },
+        'system' => sub{
+            
+        }
     };
     my $res;
     
@@ -62,26 +70,21 @@ sub run_build_config {
         $res = &{ $type_list->{ $type } }( $build_config );
 
     }
-    
     return [ parser( $res, $build_config->{ regexp } ) ];
     
 }
 
 sub run_unit_tests {
     my $build_config = shift || {};
-
-    $ENV{HARNESS_OPTIONS}       = 'j4:c';
-    $ENV{HARNESS_TIMER}         = 1;
-    $ENV{HARNESS_PERL_SWITCHES} = '';
-    $ENV{HARNESS_PERL_SWITCHES} .=' -MDevel::Cover=-db,cover_db,-ignore,\.t';
-
+    
     my @tests = grep { $_ =~/./ } glob( $build_config->{ root } . $build_config->{ tc_folder } . ( $build_config->{ selector } || '\*.t' ) );
 
-    print $ENV{HARNESS_PERL_SWITCHES} . "\n";
     open my $tap_file, '>', $type . '_test_results.tap' or die "File open error:" . $! ;
     my ($total, $failed) = execute_tests(tests => \@tests, out => $tap_file);
     close $tap_file;
 
+    my $res = read_file(  $type . '_test_results.tap' ) ;
+    return $res ;
 }
 
 sub exec_command {
@@ -107,3 +110,15 @@ sub parser {
 
     wantarray ? @match_values : \@match_values ;
 }
+
+sub set_env {
+    my $build_config = shift || return undef;
+    my $env = $build_config->{ env } || {} ;
+
+    $ENV{ $_ } = $env->{ $_ } foreach keys %{ $env } ;
+    
+    return scalar keys %{ $env } ;
+
+}
+
+
