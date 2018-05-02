@@ -13,6 +13,7 @@ use lib $FindBin::RealBin . "/cgi-bin/";
 use DBI ;
 use CGI::Session qw/-ip-match/;
 use Log ;
+use DBDispatcher qw( convert_sql );
 
 my $struct;
 my $data;
@@ -105,7 +106,8 @@ sub save_session{
     return undef unless defined $session_id ;
     $login->{'session'} = $session_id ;
     $login->{'nick'} = $login->{'username'};
-    my $sth    = $self->{'DB'} -> prepare("UPDATE sessions SET expire = TIMESTAMPADD(MINUTE,1440,NOW()) where id=?") ;
+    
+    my $sth    = $self->{'DB'} -> prepare("UPDATE sessions SET expire = " . convert_sql("TIMESTAMPADD{1440}") . " where id=?") ;
     $sth->execute( $session_id ) or die "ERROR\n";
     $sth    = $self->{'DB'} -> prepare("UPDATE sessions SET pid = ? where id=?") ;
     $sth->execute( $login->{'partner_id'}, $session_id ) or die "ERROR\n";

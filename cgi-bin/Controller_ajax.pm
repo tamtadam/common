@@ -26,7 +26,7 @@ sub new {
         1 ;
       }
       or do {
-        print "Module is not found: " . $@ ;
+        print "Module is not found: $required_module" . $@ ;
       } ;
 
     @ISA = ( "Log", $required_module ) ;
@@ -112,6 +112,10 @@ sub Logout {
 sub LoginForm {
    my $self = shift;
    my $data = shift;
+   
+   $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], $data ) ;
+   
+   
    my @login = $self->{'DB_Session'}->check_password($data);
       $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], \@login ) ;
    if ( @login ) {

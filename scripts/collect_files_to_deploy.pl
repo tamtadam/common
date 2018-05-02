@@ -21,7 +21,7 @@ $|=1;
 my $deploy = Cfg::get_struct_from_file($ENV{GIT_ROOT} . '\cfg\collect_files_to_deploy.cfg');
 my $project_name = uc ($ARGV[ 0 ] || 'ontozo');
 my $version      = Cfg::get_first_free_version(); #   $ARGV[ 1 ] || 'v2_0_2';
-my @components   =    $ARGV[ 1 ] // qw(cgi-bin htdocs tools sql tools); # docs
+my @components   =    $ARGV[ 1 ] // qw(cgi-bin htdocs tools sql tools test); # docs
 
 foreach my $component ( @components ) {
     my $target_dir = change_project_version( $deploy->{ $project_name }->{ TARGET }, $component );

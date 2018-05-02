@@ -12,7 +12,7 @@ use Log ;
 use JSON ;
 our @ISA = qw( Log Ajax ) ;
 
-my $log = undef ;
+my $log = 1 ;
 
 sub new {
     my $instance = shift ;
@@ -54,8 +54,8 @@ sub get_data_from_server {
 
     my $needed_param = shift ;
 
-    my $needed_valus = $self->getDataFromClient( $needed_param ) ;
-
+    my $needed_valus = $self->getDataFromClient( $needed_param );
+    $self->start_time( @{ [ caller( 0 ) ] }[ 3 ], $needed_valus ) if $log ;
     return $needed_valus ;
 } ## end sub get_data_from_server
 

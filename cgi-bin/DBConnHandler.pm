@@ -35,7 +35,8 @@ END {
 sub init {
     my $project_cfg = shift ;
 
-    $SERVER_CFG->{ my_sql } = ( $project_cfg ? Cfg::get_struct_from_file( $project_cfg )->{ DATABASE } : {} ) ;
+    $SERVER_CFG->{ my_sql } = ( $project_cfg and -e $project_cfg ? Cfg::get_struct_from_file( $project_cfg )->{ DATABASE } : {} ) ;
+
     $DB = DBI->connect(
                         @{ get_data_src() },
                         {

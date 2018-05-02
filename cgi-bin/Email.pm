@@ -36,15 +36,23 @@ sub init {
 sub send_mail {
     my $params = shift || {};
     Log->start_time('Email::send_mail', { asfasdf => $params} );
-    my $mail = Email::Send::SMTP::Gmail->new(
-                                             -smtp  => Cfg::get_data('EMAILSMTP'),
-                                             -login => Cfg::get_data('EMAILU'),
-                                             -pass  => Cfg::get_data('EMAILW'),
-                                             -layer => 'ssl',
-                                             -port  => 465);
-    $mail->send( map { '-' . $_ => $params->{ $_ } } qw(to subject body contenttype) );
+    
+    unless ( $ENV{ TEST_SQLITE } ) {
+        my $mail = Email::Send::SMTP::Gmail->new(
+                                                 -smtp  => Cfg::get_data('EMAILSMTP'),
+                                                 -login => Cfg::get_data('EMAILU'),
+                                                 -pass  => Cfg::get_data('EMAILW'),
+                                                 -layer => 'ssl',
+                                                 -port  => 465);
+        $mail->send( map { '-' . $_ => $params->{ $_ } } qw(to subject body contenttype) );
+    
+        $mail->bye;
+    } else {
+        return {
+            map { $_ => $params->{ $_ } } qw(to subject body contenttype)
+        }
+    }
 
-    $mail->bye;
 }
 
 1 ;

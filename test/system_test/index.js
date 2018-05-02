@@ -66,7 +66,7 @@ var tests = [
 ];
 
 asyncLoop( tests, function (test, testLoop) {
-	runTest( (require('.\\tests\\' + test ) ).test, function(){
+	runTest( (require('f:\\GIT\\gherkin_editor\\test\\system\\' + test ) ).test, function(){
 		testLoop.next()
 	})
 }, function () {

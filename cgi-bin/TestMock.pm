@@ -17,7 +17,8 @@ use File::Copy qw( copy ) ;
 
 use Readonly ;
 use JSON::XS qw( decode_json ) ;
-
+use IPC::System::Simple qw(capture);
+    
 use parent qw( Test::MockModule ) ;
 
 use Exporter qw( import ) ;
@@ -446,17 +447,16 @@ sub count_buffer {
 } ## end sub count_buffer
 
 sub get_result_of_fcgi {
-    print Dumper \@_;
     my $cgi_path = shift ;
     my $param    = shift ;
-
-    open( my $cgi, "-|", $cgi_path, $cgi_path ) or die "Can't open pipe to:" . $cgi_path ;
-    my @ress = system("$cgi_path $cgi_path");
-    my @res = <$cgi> ;
-    close $cgi ;
-    print Dumper @ress;
-    my $res_s = pop @res ;
-
+    local $ENV{ SERVERCFG } = 'f:\\GIT\\gherkin_editor\\cgi-bin\\server.cfg';
+    local $ENV{ ROOTDIR } = 'f:\\GIT\\gherkin_editor\\';
+    #open( my $cgi, "-|", $cgi_path, $param ) or die "Can't open pipe to:" . $cgi_path ;
+    my @ress = capture("perl", $cgi_path, $param);
+    #print Dumper \%ENV;
+    #my @res = <$cgi> ;
+    #close $cgi ;
+    my $res_s = pop @ress ;
     return {
              ref => $res_s ? decode_json( $res_s ) : [],
              json => $res_s

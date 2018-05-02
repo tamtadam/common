@@ -4,7 +4,7 @@ use warnings;
 use CGI;
 use Data::Dumper;
 use utf8;
-use JSON;
+use JSON::PP;
 use Encode qw(decode encode);
 our @ISA = qw();
 sub new {
@@ -34,15 +34,17 @@ sub getDataFromClient {
     my $true = undef ;
 
     $CGI::LIST_CONTEXT_WARN = 0;
-    my $json = JSON->new->allow_nonref;
-    for ( $self->{CGI}->param() ) {
-        next unless  $self->{CGI}->param($_) ;
-        $result->{$_} = $json->utf8(0)->decode ($self->{CGI}->param($_));#, { utf8  => 1 } );
-        $true = 1  ;
+    my $json = JSON::PP->new->allow_nonref;
+    unless ( $ENV{ TEST_SQLITE } ) {
+        for ( $self->{CGI}->param() ) {
+            next unless  $self->{CGI}->param($_) ;
+            $result->{$_} = $json->utf8(0)->decode ($self->{CGI}->param($_));#, { utf8  => 1 } );
+            $true = 1  ;
+        }
     }
     if( $ARGV[ 0 ] ) {
-        $result = $json->utf8(0)->decode( $ARGV[ 0 ] );
-        $true = 1  ;
+        $result = $json->utf8(0)->allow_singlequote->allow_barekey->decode( $ARGV[ 0 ] );
+        $true = 1;
     }
     return $result;
 }

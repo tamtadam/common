@@ -112,6 +112,12 @@ sub dispatcher {
             my_sql => sub { return 'DATE_ADD(' . $_[ 0 ] . ', INTERVAL ' . $_[ 1 ]. ' DAY)' } ,
             sqlite => sub { return '' },
         },
+        TIMESTAMPADD => {
+            my_sql => sub { return 'TIMESTAMPADD(MINUTE, ' . $_[ 0 ] . ' , NOW())' },
+            sqlite => sub { return "datetime('now','+ " . $_[ 0 ]. " minutes')"},
+        }
+        
+        
     } ;
 
     return $disp->{ $func }{ $driver }( @params );

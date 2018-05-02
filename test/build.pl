@@ -1,3 +1,5 @@
+#!C:\Perl64\bin\perl.exe
+
 use strict;
 use warnings;
 
@@ -15,6 +17,7 @@ use YAML;
 use Readonly;
 use Test::Harness qw(execute_tests);
 use File::Slurp;
+use IPC::System::Simple qw(capture);
 
 use feature qw(state);
 
@@ -29,14 +32,14 @@ GetOptions (
 ) or die("Missing argument");
 
 
-my $yaml = YAML::LoadFile( 'f:\GIT\gherkin_editor\build.yaml' );
-my $dirname  = dirname( 'f:\GIT\gherkin_editor\build.yaml' );
-my $main_dir = dirname( dirname( 'f:\GIT\gherkin_editor\build.yaml' ) );
+my $yaml = YAML::LoadFile( $ARGV[ 0 ] || 'f:\GIT\gherkin_editor\build.yaml' );
+my $dirname  = dirname( $ARGV[ 0 ] || 'f:\GIT\gherkin_editor\build.yaml' );
+my $main_dir = dirname( dirname( $ARGV[ 0 ] || 'f:\GIT\gherkin_editor\build.yaml' ) );
 my $cgi_bin = $main_dir . '/cgi-bin/';
 
 
 if ( exists $yaml->{ $type } ) {
-    print Dumper run_build_config( $yaml->{ $type }, $type, $dirname );
+    run_build_config( $yaml->{ $type }, $type, $dirname );
 
 } else {
     print "TYPE is not defined in the given build config\n";
@@ -54,10 +57,14 @@ sub run_build_config {
             set_env( @_ );
             return run_unit_tests( @_ );
         },
-        'comp'   => sub{
-            
+        'component'   => sub{
+            set_env( @_ );
+            return run_unit_tests( @_ );
         },
         'system' => sub{
+            
+        },
+        'coverage' => sub{
             
         }
     };
@@ -89,7 +96,14 @@ sub run_unit_tests {
 
 sub exec_command {
     my $cmd = shift || return undef;
-    return qx{$cmd $cgi_bin};
+
+    if ( ref $cmd eq 'ARRAY' ) {
+        exec_command( $_ ) for @{ $cmd } ;
+        
+    } else {
+        my @ress = qx($cmd);
+        print @ress;
+    }
 
 }
 

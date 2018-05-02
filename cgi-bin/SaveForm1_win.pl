@@ -2,6 +2,12 @@
 
 use strict;
 use warnings;
+
+use FindBin ;
+
+use lib 'f:\\GIT\\common\\cgi-bin\\';
+use lib 'f:\\GIT\\gherkin_editor\\cgi-bin\\';
+
 use DBConnHandler;
 use CGI;
 use View_ajax;
@@ -9,7 +15,8 @@ use Controller_ajax;
 use Data::Dumper ;
 use English qw' -no_match_vars ';
 
-Log::init_log_path( $OSNAME =~/win/i ? "f:\\xampp\\cgi-bin\\log\\" : "/var/www/cgi-bin/log/" );
+Log::init_log_path( $OSNAME =~/win/i ? "./log/" : "/var/www/cgi-bin/log/" );
+
 
 $ENV{ STDOUT_REDIRECT } = 0;
 
