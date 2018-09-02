@@ -46,6 +46,10 @@ sub init {
                         }
                       )
         or print "ERROR in db connection\n" . Dumper ( $SERVER_CFG->{ my_sql } || $ENV{ TEST_SQLITE } );
+    
+    if ( $ENV{ TEST_SQLITE } and $ENV{ TEST_SQLITE } =~ /:memory:/ ) {
+        $DB->sqlite_backup_from_file($ENV{DATABASE});
+    }
     return $DB ;
 } ## end sub init
 

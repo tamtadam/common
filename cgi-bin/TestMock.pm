@@ -77,6 +77,7 @@ BEGIN {
     } ;
 } ## end BEGIN
 
+
 sub new {
     my $class = shift ;
     my $self  = {} ;
@@ -128,7 +129,7 @@ sub mock {
                 &mocked_new( \'' . $package . '\', \'' . $_[ 0 ] . '\');
             }' ;
             eval $function ;
-
+            $self->SUPER::mock( 'new', sub { $self->check_in_out_params( @_, 'new'); } ) ;
         } else {
             $function = '*' . $package . '::' . $_[ 0 ] . ' = sub {
                 $self->check_in_out_params( @_, \'' . $_[ 0 ] . '\');
@@ -141,13 +142,17 @@ sub mock {
 }
 
 sub set_test_dependent_db {
-    my $sqlite_to_mock = shift || do {
-        die 'Test DB env. variable is not set' unless $ENV{ TEST_SQLITE } ;
-        my $sq = &convert_filename_to_sqlite_path( ( caller( 0 ) )[ 1 ] ) ;
-        copy_test_db( $ENV{ TEST_SQLITE }, $sq ) ;
-        $sq;
-    } ;
-    $ENV{ TEST_SQLITE } = $sqlite_to_mock ;
+    
+    if( $ENV{ TEST_SQLITE } !~ /:memory:/ ) {
+        my $sqlite_to_mock = shift || do {
+            die 'Test DB env. variable is not set' unless $ENV{ TEST_SQLITE } ;
+            my $sq = &convert_filename_to_sqlite_path( ( caller( 0 ) )[ 1 ] ) ;
+            copy_test_db( $ENV{ TEST_SQLITE }, $sq ) ;
+            $sq;
+        } ;
+        $ENV{ TEST_SQLITE } = $sqlite_to_mock ;
+    }
+
 } ## end sub set_test_dependent_db
 
 sub copy_test_db {
@@ -163,6 +168,7 @@ sub copy_test_db {
 } ## end sub copy_test_db
 
 sub remove_test_db {
+    return if  $ENV{ TEST_SQLITE } =~ /:memory:/;
     my $test_db = &convert_filename_to_sqlite_path( ( caller( 0 ) )[ 1 ] ) ;
     -e $test_db or confess "$test_db doesn't exist" ;
 
@@ -285,6 +291,7 @@ sub check_in_out_params {
 sub mocked_new {
     my $self = {} ;
     bless $self, $_[ 0 ] ;
+    $self->check_in_out_params( @_, 'new');
     return $self ;
 } ## end sub mocked_new
 

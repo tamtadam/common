@@ -32,14 +32,14 @@ GetOptions (
 ) or die("Missing argument");
 
 
-my $yaml = YAML::LoadFile( $ARGV[ 0 ] || 'f:\GIT\gherkin_editor\build.yaml' );
-my $dirname  = dirname( $ARGV[ 0 ] || 'f:\GIT\gherkin_editor\build.yaml' );
-my $main_dir = dirname( dirname( $ARGV[ 0 ] || 'f:\GIT\gherkin_editor\build.yaml' ) );
+my $yaml = YAML::LoadFile( $ARGV[ 0 ] || 'build.yaml' );
+my $dirname  = dirname( $ARGV[ 0 ] || 'build.yaml' );
+my $main_dir = dirname( dirname( $ARGV[ 0 ] || 'build.yaml' ) );
 my $cgi_bin = $main_dir . '/cgi-bin/';
 
 
 if ( exists $yaml->{ $type } ) {
-    run_build_config( $yaml->{ $type }, $type, $dirname );
+    print Dumper run_build_config( $yaml->{ $type }, $type, $dirname );
 
 } else {
     print "TYPE is not defined in the given build config\n";
