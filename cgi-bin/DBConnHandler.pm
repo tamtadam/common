@@ -73,6 +73,9 @@ sub get_test_data_src {
 } ## end sub get_test_data_src
 
 sub get_normal_data_src {
+    if ( $ENV{ SQLITE } ) {
+        return [ 'dbi:SQLite:dbname=' . $ENV{ SQLITE }, "", "" ]
+    }
     my $cfg = get_my_sql_config() ;
     return [ "dbi:$cfg->{PLATFORM}:dbname=$cfg->{DATABASE};host=$cfg->{HOST};port=$cfg->{PORT};",
              "$cfg->{USER}", "$cfg->{PWD}" ] ;

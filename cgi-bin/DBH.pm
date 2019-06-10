@@ -387,7 +387,12 @@ sub create_where_param {
     {
         if ( 'ARRAY' eq ref $data->{ $select_insert_fields }->{ $_ } ) {
             for my $faktor_id ( @{ $data->{ $select_insert_fields }->{ $_ } } ) {
-                $where .= $_ . " = " . ( "?" ) . " $relation " ;
+                if ( $faktor_id =~ /^<>/ ) {
+                    $where .= $_ . " <> " . ( "?" ) . " $relation " ;
+                } else {
+                    $where .= $_ . " = " . ( "?" ) . " $relation " ;
+                }
+                
                 $where_param .= $faktor_id . $PARAM_DELIMITER ;
             } ## end for my $faktor_id ( @{ ...})
 

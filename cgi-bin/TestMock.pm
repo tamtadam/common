@@ -260,7 +260,7 @@ sub unmock {
     my $function = shift ;
     my $package  = ref $self ? $self->{ _package } : '' ;
 
-    my $eval = '*' . $package . '::' . $function . '*' . '$self->{ IO }{ $function }{ $OLD_SUB }' ;
+    my $eval = '*' . $package . '::' . $function . '=' . '$self->{ IO }{ $function }{ OLD_SUB }' ;
 
     eval $eval ;
 } ## end sub unmock

@@ -5,7 +5,7 @@ use Data::Dumper ;
 use File::stat ;
 use English qw' -no_match_vars ';
 
-our $LOG_ENABLED = 1 ;
+our $LOG_ENABLED = 0 ;
 our $VERSION     = '0.02' ;
 
 my $LOG_DIR;
